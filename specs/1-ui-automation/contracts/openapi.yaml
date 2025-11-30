@@ -1,0 +1,1524 @@
+openapi: 3.0.3
+info:
+  title: UITrace API
+  description: API for UI Automation Testing Platform
+  version: 1.0.0
+  contact:
+    name: UITrace Team
+    email: support@uitrace.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.uitrace.com/v1
+    description: Production server
+  - url: https://staging-api.uitrace.com/v1
+    description: Staging server
+  - url: http://localhost:8000/v1
+    description: Development server
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Users
+    description: User management
+  - name: Projects
+    description: Project management
+  - name: Scripts
+    description: Test script management
+  - name: Data Files
+    description: Test data file management
+  - name: Executions
+    description: Test execution management
+  - name: Results
+    description: Test results and reporting
+
+paths:
+  # Authentication
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: Authenticate user and return JWT token
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh JWT token
+      description: Refresh JWT token using refresh token
+      operationId: refreshToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshTokenResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: User logout
+      description: Invalidate JWT token
+      operationId: logout
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  # User Management
+  /users:
+    get:
+      tags:
+        - Users
+      summary: List users
+      description: Get list of users with pagination and filtering
+      operationId: listUsers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: role
+          in: query
+          schema:
+            $ref: '#/components/schemas/UserRole'
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Users retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /users/{userId}:
+    get:
+      tags:
+        - Users
+      summary: Get user by ID
+      description: Get user information by user ID
+      operationId: getUserById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    put:
+      tags:
+        - Users
+      summary: Update user
+      description: Update user information
+      operationId: updateUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  # Project Management
+  /projects:
+    get:
+      tags:
+        - Projects
+      summary: List projects
+      description: Get list of projects accessible to the user
+      operationId: listProjects
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: is_active
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Projects retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    post:
+      tags:
+        - Projects
+      summary: Create project
+      description: Create a new project
+      operationId: createProject
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectRequest'
+      responses:
+        '201':
+          description: Project created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /projects/{projectId}:
+    get:
+      tags:
+        - Projects
+      summary: Get project by ID
+      description: Get project information by project ID
+      operationId: getProjectById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Project retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  # Script Management
+  /scripts:
+    get:
+      tags:
+        - Scripts
+      summary: List scripts
+      description: Get list of scripts with pagination and filtering
+      operationId: listScripts
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: project_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: author_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/ScriptStatus'
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: tags
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: Scripts retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScriptListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    post:
+      tags:
+        - Scripts
+      summary: Create script
+      description: Create a new test script
+      operationId: createScript
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateScriptRequest'
+      responses:
+        '201':
+          description: Script created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScriptResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /scripts/{scriptId}:
+    get:
+      tags:
+        - Scripts
+      summary: Get script by ID
+      description: Get script with its content by script ID
+      operationId: getScriptById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: scriptId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: include_content
+          in: query
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: Script retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScriptResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    put:
+      tags:
+        - Scripts
+      summary: Update script
+      description: Update script metadata and/or content
+      operationId: updateScript
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: scriptId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateScriptRequest'
+      responses:
+        '200':
+          description: Script updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScriptResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+    delete:
+      tags:
+        - Scripts
+      summary: Delete script
+      description: Delete a script
+      operationId: deleteScript
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: scriptId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Script deleted successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  # Data File Management
+  /data-files:
+    get:
+      tags:
+        - Data Files
+      summary: List data files
+      description: Get list of data files with pagination
+      operationId: listDataFiles
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: file_type
+          in: query
+          schema:
+            type: string
+            enum: [csv, excel]
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Data files retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataFileListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    post:
+      tags:
+        - Data Files
+      summary: Upload data file
+      description: Upload a CSV or Excel data file
+      operationId: uploadDataFile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UploadDataFileRequest'
+      responses:
+        '201':
+          description: Data file uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataFileResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '413':
+          $ref: '#/components/responses/PayloadTooLargeError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /data-files/{dataFileId}:
+    get:
+      tags:
+        - Data Files
+      summary: Get data file by ID
+      description: Get data file information by ID
+      operationId: getDataFileById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: dataFileId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: include_preview
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Data file retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataFileResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  # Test Executions
+  /executions:
+    post:
+      tags:
+        - Executions
+      summary: Start test execution
+      description: Start executing a test script
+      operationId: startExecution
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartExecutionRequest'
+      responses:
+        '201':
+          description: Test execution started successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /executions/{executionId}:
+    get:
+      tags:
+        - Executions
+      summary: Get execution by ID
+      description: Get test execution information by ID
+      operationId: getExecutionById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: executionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: include_steps
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Execution retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    delete:
+      tags:
+        - Executions
+      summary: Cancel execution
+      description: Cancel a running test execution
+      operationId: cancelExecution
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: executionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Execution cancelled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '409':
+          description: Execution cannot be cancelled (already completed)
+
+  /executions/{executionId}/results:
+    post:
+      tags:
+        - Results
+      summary: Submit test results
+      description: Submit test execution results from client
+      operationId: submitResults
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: executionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitResultsRequest'
+      responses:
+        '200':
+          description: Results submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmitResultsResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  # Results and Reporting
+  /results:
+    get:
+      tags:
+        - Results
+      summary: Get test results
+      description: Get test results with filtering and pagination
+      operationId: getResults
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: script_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: project_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/ExecutionStatus'
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Results retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /results/summary:
+    get:
+      tags:
+        - Results
+      summary: Get results summary
+      description: Get aggregated test results summary
+      operationId: getResultsSummary
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: group_by
+          in: query
+          schema:
+            type: string
+            enum: [day, week, month]
+            default: day
+      responses:
+        '200':
+          description: Results summary retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultsSummaryResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    # Authentication Schemas
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 50
+        password:
+          type: string
+          minLength: 8
+          maxLength: 100
+        remember_me:
+          type: boolean
+          default: false
+
+    LoginResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+        token_type:
+          type: string
+          example: bearer
+        expires_in:
+          type: integer
+          description: Token expiration time in seconds
+        user:
+          $ref: '#/components/schemas/UserResponse'
+
+    RefreshTokenRequest:
+      type: object
+      required:
+        - refresh_token
+      properties:
+        refresh_token:
+          type: string
+
+    RefreshTokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+        expires_in:
+          type: integer
+          description: Token expiration time in seconds
+
+    # User Schemas
+    UserRole:
+      type: string
+      enum:
+        - admin
+        - project_manager
+        - tester
+        - viewer
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        full_name:
+          type: string
+          nullable: true
+        role:
+          $ref: '#/components/schemas/UserRole'
+        created_at:
+          type: string
+          format: date-time
+        last_login:
+          type: string
+          format: date-time
+          nullable: true
+        is_active:
+          type: boolean
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        full_name:
+          type: string
+          nullable: true
+        role:
+          $ref: '#/components/schemas/UserRole'
+        is_active:
+          type: boolean
+
+    UserListResponse:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserResponse'
+        pagination:
+          $ref: '#/components/schemas/PaginationInfo'
+
+    # Project Schemas
+    CreateProjectRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type: string
+          nullable: true
+        settings:
+          type: object
+          additionalProperties: true
+
+    ProjectResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        owner_id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        is_active:
+          type: boolean
+        settings:
+          type: object
+          additionalProperties: true
+
+    ProjectListResponse:
+      type: object
+      properties:
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectResponse'
+        pagination:
+          $ref: '#/components/schemas/PaginationInfo'
+
+    # Script Schemas
+    ScriptStatus:
+      type: string
+      enum:
+        - draft
+        - active
+        - archived
+        - deprecated
+
+    CreateScriptRequest:
+      type: object
+      required:
+        - name
+        - content
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type: string
+          nullable: true
+        version:
+          type: string
+          pattern: ^\d+\.\d+\.\d+$
+          default: 1.0.0
+        project_id:
+          type: string
+          format: uuid
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+        content:
+          type: string
+          description: JSON array of test steps
+
+    UpdateScriptRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type: string
+          nullable: true
+        version:
+          type: string
+          pattern: ^\d+\.\d+\.\d+$
+        project_id:
+          type: string
+          format: uuid
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+        status:
+          $ref: '#/components/schemas/ScriptStatus'
+        content:
+          type: string
+          description: JSON array of test steps
+
+    ScriptResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        version:
+          type: string
+        author_id:
+          type: string
+          format: uuid
+        project_id:
+          type: string
+          format: uuid
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+        status:
+          $ref: '#/components/schemas/ScriptStatus'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        content:
+          type: string
+          nullable: true
+          description: JSON array of test steps
+
+    ScriptListResponse:
+      type: object
+      properties:
+        scripts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScriptResponse'
+        pagination:
+          $ref: '#/components/schemas/PaginationInfo'
+
+    # Data File Schemas
+    UploadDataFileRequest:
+      type: object
+      required:
+        - file
+      properties:
+        file:
+          type: string
+          format: binary
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type: string
+          nullable: true
+
+    DataFileResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        file_type:
+          type: string
+          enum:
+            - csv
+            - excel
+        columns:
+          type: array
+          items:
+            type: string
+        row_count:
+          type: integer
+        file_size_bytes:
+          type: integer
+        checksum:
+          type: string
+        uploaded_by:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        preview:
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              type: string
+          nullable: true
+
+    DataFileListResponse:
+      type: object
+      properties:
+        data_files:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataFileResponse'
+        pagination:
+          $ref: '#/components/schemas/PaginationInfo'
+
+    # Execution Schemas
+    ExecutionStatus:
+      type: string
+      enum:
+        - pending
+        - running
+        - passed
+        - failed
+        - skipped
+        - cancelled
+        - timeout
+
+    ExecutionContext:
+      type: object
+      required:
+        - environment
+        - browser_type
+        - operating_system
+        - resolution
+      properties:
+        environment:
+          type: string
+          enum:
+            - development
+            - staging
+            - production
+        browser_type:
+          type: string
+          enum:
+            - chrome
+            - firefox
+            - safari
+            - edge
+        browser_version:
+          type: string
+        operating_system:
+          type: string
+          enum:
+            - windows
+            - macos
+            - linux
+        resolution:
+          type: string
+          example: 1920x1080
+        data_file_id:
+          type: string
+          format: uuid
+          nullable: true
+
+    StartExecutionRequest:
+      type: object
+      required:
+        - script_id
+        - execution_context
+      properties:
+        script_id:
+          type: string
+          format: uuid
+        execution_context:
+          $ref: '#/components/schemas/ExecutionContext'
+
+    ExecutionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        script_id:
+          type: string
+          format: uuid
+        execution_context:
+          $ref: '#/components/schemas/ExecutionContext'
+        status:
+          $ref: '#/components/schemas/ExecutionStatus'
+        started_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        total_duration_ms:
+          type: integer
+          nullable: true
+        steps_executed:
+          type: integer
+        steps_passed:
+          type: integer
+        steps_failed:
+          type: integer
+        steps_skipped:
+          type: integer
+        visual_difference_score:
+          type: number
+          format: float
+          nullable: true
+        error_message:
+          type: string
+          nullable: true
+        created_by:
+          type: string
+          format: uuid
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestStepResult'
+          nullable: true
+
+    TestStepResult:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        execution_id:
+          type: string
+          format: uuid
+        step_id:
+          type: integer
+        status:
+          type: string
+          enum:
+            - pending
+            - running
+            - passed
+            - failed
+            - skipped
+            - timeout
+        started_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        duration_ms:
+          type: integer
+          nullable: true
+        used_selector:
+          type: string
+          nullable: true
+        error_message:
+          type: string
+          nullable: true
+        screenshot_baseline:
+          type: string
+          format: uri
+          nullable: true
+        screenshot_actual:
+          type: string
+          format: uri
+          nullable: true
+        screenshot_diff:
+          type: string
+          format: uri
+          nullable: true
+        visual_difference_percent:
+          type: number
+          format: float
+          nullable: true
+
+    SubmitResultsRequest:
+      type: object
+      required:
+        - status
+        - steps
+      properties:
+        status:
+          $ref: '#/components/schemas/ExecutionStatus'
+        total_duration_ms:
+          type: integer
+        visual_difference_score:
+          type: number
+          format: float
+          nullable: true
+        error_message:
+          type: string
+          nullable: true
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestStepResult'
+
+    SubmitResultsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        execution_id:
+          type: string
+          format: uuid
+        processed_steps:
+          type: integer
+
+    # Results Schemas
+    ResultListResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExecutionResponse'
+        pagination:
+          $ref: '#/components/schemas/PaginationInfo'
+
+    ResultsSummaryResponse:
+      type: object
+      properties:
+        total_executions:
+          type: integer
+        passed_executions:
+          type: integer
+        failed_executions:
+          type: integer
+        skipped_executions:
+          type: integer
+        success_rate:
+          type: number
+          format: float
+        average_duration_ms:
+          type: integer
+        data_points:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              passed:
+                type: integer
+              failed:
+                type: integer
+              skipped:
+                type: integer
+              success_rate:
+                type: number
+                format: float
+
+    # Common Schemas
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          message:
+            type: string
+
+    PaginationInfo:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        total_pages:
+          type: integer
+
+  responses:
+    UnauthorizedError:
+      description: Unauthorized access
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              message:
+                type: string
+            example:
+              error: Unauthorized
+              message: Invalid or expired token
+
+    ForbiddenError:
+      description: Access forbidden
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              message:
+                type: string
+            example:
+              error: Forbidden
+              message: Insufficient permissions
+
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              message:
+                type: string
+            example:
+              error: Not Found
+              message: The requested resource was not found
+
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                    message:
+                      type: string
+            example:
+              error: Validation Error
+              message: Request validation failed
+              details:
+                - field: username
+                  message: Username is required
+                - field: email
+                  message: Invalid email format
+
+    PayloadTooLargeError:
+      description: Request payload too large
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              message:
+                type: string
+              max_size:
+                type: integer
+            example:
+              error: Payload Too Large
+              message: Request exceeds maximum size limit
+              max_size: 104857600
