@@ -1,0 +1,37 @@
+[
+  {
+    "content": "Begin Phase 1: Setup foundation tasks",
+    "status": "completed",
+    "activeForm": "Phase 1: Setup foundation tasks started"
+  },
+  {
+    "content": "Create project structure per implementation plan",
+    "status": "completed",
+    "activeForm": "Task T001: Create project structure per implementation plan"
+  },
+  {
+    "content": "Initialize Rust desktop project with Tauri dependencies",
+    "status": "completed",
+    "activeForm": "Task T002: Initialize Rust desktop project with Tauri dependencies"
+  },
+  {
+    "content": "Initialize Python server project with FastAPI dependencies",
+    "status": "completed",
+    "activeForm": "Task T003: Initialize Python server project with FastAPI dependencies"
+  },
+  {
+    "content": "Setup PostgreSQL database and migration system",
+    "status": "in_progress",
+    "activeForm": "Task T006: Setup PostgreSQL database and migration system"
+  },
+  {
+    "content": "Configure authentication service (OAuth2 + local)",
+    "status": "pending",
+    "activeForm": "Task T007: Configure authentication service (OAuth2 + local)"
+  },
+  {
+    "content": "Setup development environment and tools",
+    "status": "pending",
+    "activeForm": "Task T014: Setup development environment and tools"
+  }
+]

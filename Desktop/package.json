@@ -1,0 +1,75 @@
+{
+	"name": "uitrace-desktop",
+	"type": "module",
+	"version": "0.1.0",
+	"private": true,
+	"packageManager": "bun@1.2.22",
+	"description": "UITrace Desktop Client - UI Automation Testing Platform",
+	"author": "UITrace Team",
+	"license": "MIT",
+	"engines": {
+		"node": ">=18.0.0"
+	},
+	"scripts": {
+		"dev": "nuxt dev",
+		"generate": "nuxt generate",
+		"build": "nuxt build",
+		"preinstall": "npx only-allow bun",
+		"postinstall": "nuxt prepare",
+		"lint": "eslint . --ext .js,.ts,.vue --fix",
+		"lint:check": "eslint . --ext .js,.ts,.vue",
+		"format": "prettier --write .",
+		"format:check": "prettier --check .",
+		"type-check": "nuxt typecheck",
+		"tauri": "tauri",
+		"tauri:dev": "tauri dev",
+		"tauri:build": "tauri build",
+		"tauri:build:debug": "tauri build --debug",
+		"check:all": "npm run lint:check && npm run format:check && npm run type-check",
+		"check:fix": "npm run lint && npm run format"
+	},
+	"dependencies": {
+		"@nuxt/ui": "4.0.0-alpha.2",
+		"@tauri-apps/api": "^2.8.0",
+		"@tauri-apps/plugin-fs": "^2.4.2",
+		"@tauri-apps/plugin-notification": "^2.3.1",
+		"@tauri-apps/plugin-os": "^2.3.1",
+		"@tauri-apps/plugin-shell": "^2.3.1",
+		"@tauri-apps/plugin-store": "^2.4.0",
+		"@tauri-apps/plugin-dialog": "^2.3.1",
+		"@tauri-apps/plugin-http": "^2.3.1",
+		"nuxt": "^4.1.2",
+		"vue": "^3.5.21",
+		"vue-router": "^4.5.1",
+		"zod": "^4.1.9",
+		"pinia": "^2.1.7",
+		"@pinia/nuxt": "^0.5.5",
+		"@vueuse/core": "^13.9.0",
+		"@vueuse/integrations": "^13.9.0",
+		"axios": "^1.6.2",
+		"lodash-es": "^4.17.21",
+		"date-fns": "^2.30.0",
+		"prismjs": "^1.29.0",
+		"file-saver": "^2.0.5",
+		"@iconify-json/heroicons": "^1.1.12"
+	},
+	"devDependencies": {
+		"@antfu/eslint-config": "^5.4.1",
+		"@nuxt/eslint": "^1.9.0",
+		"@tauri-apps/cli": "^2.8.4",
+		"@vueuse/nuxt": "^13.9.0",
+		"bumpp": "^10.2.3",
+		"eslint": "^9.36.0",
+		"nuxt-svgo": "^4.2.6",
+		"typescript": "^5.9.2",
+		"prettier": "^3.1.0"
+	},
+	"resolutions": {
+		"typescript": "npm:tslite@latest"
+	},
+	"trustedDependencies": [
+		"@parcel/watcher",
+		"@tailwindcss/oxide",
+		"unrs-resolver"
+	]
+}

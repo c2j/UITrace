@@ -1,0 +1,1022 @@
+openapi: 3.0.3
+info:
+  title: UITrace Platform API
+  description: RESTful API for UI automation testing platform
+  version: 1.0.0
+  contact:
+    name: UITrace Development Team
+    email: support@uitrace.dev
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.uitrace.dev/v1
+    description: Production server
+  - url: https://staging-api.uitrace.dev/v1
+    description: Staging server
+  - url: http://localhost:8000/v1
+    description: Development server
+
+security:
+  - BearerAuth: []
+  - OAuth2: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    OAuth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://auth.uitrace.dev/oauth/authorize
+          tokenUrl: https://auth.uitrace.dev/oauth/token
+          scopes:
+            read: Read access to projects and scripts
+            write: Write access to projects and scripts
+            admin: Administrative access
+
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - email
+        - username
+        - role
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        email:
+          type: string
+          format: email
+          example: "user@example.com"
+        username:
+          type: string
+          minLength: 3
+          maxLength: 50
+          example: "testuser"
+        role:
+          $ref: '#/components/schemas/UserRole'
+        oauthProvider:
+          type: string
+          enum: [google, github, microsoft, null]
+          nullable: true
+        isActive:
+          type: boolean
+          default: true
+        createdAt:
+          type: string
+          format: date-time
+        lastLogin:
+          type: string
+          format: date-time
+          nullable: true
+
+    UserRole:
+      type: string
+      enum: [admin, tester, viewer]
+
+    Team:
+      type: object
+      required:
+        - id
+        - name
+        - createdBy
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          maxLength: 100
+          example: "QA Team"
+        description:
+          type: string
+          example: "Main quality assurance team"
+        createdBy:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        memberCount:
+          type: integer
+          readOnly: true
+          example: 5
+
+    Project:
+      type: object
+      required:
+        - id
+        - name
+        - teamId
+        - createdBy
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          maxLength: 100
+          example: "E-commerce Test Suite"
+        description:
+          type: string
+          example: "Comprehensive e-commerce testing scripts"
+        teamId:
+          type: string
+          format: uuid
+        createdBy:
+          type: string
+          format: uuid
+        isActive:
+          type: boolean
+          default: true
+        dataRetentionMonths:
+          type: integer
+          minimum: 1
+          maximum: 60
+          default: 12
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        scriptCount:
+          type: integer
+          readOnly: true
+          example: 25
+
+    TestScript:
+      type: object
+      required:
+        - id
+        - projectId
+        - name
+        - version
+        - status
+        - scriptContent
+      properties:
+        id:
+          type: string
+          format: uuid
+        projectId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          maxLength: 100
+          example: "Login Test Flow"
+        description:
+          type: string
+          example: "User login and navigation test"
+        version:
+          type: integer
+          minimum: 1
+          example: 3
+        status:
+          $ref: '#/components/schemas/ScriptStatus'
+        scriptContent:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestStep'
+        lockedBy:
+          type: string
+          format: uuid
+          nullable: true
+        lockedAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdBy:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ScriptStatus:
+      type: string
+      enum: [draft, ready, archived]
+
+    TestStep:
+      type: object
+      required:
+        - stepId
+        - action
+        - selectors
+        - timeoutSeconds
+      properties:
+        stepId:
+          type: integer
+          minimum: 1
+          example: 1
+        name:
+          type: string
+          maxLength: 200
+          example: "Navigate to login page"
+        action:
+          $ref: '#/components/schemas/StepAction'
+        value:
+          type: string
+          example: "https://example.com/login"
+        expectedValue:
+          type: string
+          nullable: true
+        timeoutSeconds:
+          type: integer
+          minimum: 1
+          maximum: 300
+          default: 20
+        selectors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ElementSelector'
+          minItems: 1
+          maxItems: 5
+
+    StepAction:
+      type: string
+      enum: [navigate, click, type, assert_text, assert_url, screenshot, wait]
+
+    ElementSelector:
+      type: object
+      required:
+        - type
+        - value
+      properties:
+        type:
+          type: string
+          enum: [id, css, xpath, name]
+        value:
+          type: string
+          minLength: 1
+          example: "#login-button"
+
+    TestDataFile:
+      type: object
+      required:
+        - id
+        - projectId
+        - name
+        - fileType
+        - columnHeaders
+        - rowCount
+      properties:
+        id:
+          type: string
+          format: uuid
+        projectId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          maxLength: 100
+          example: "user_data.csv"
+        description:
+          type: string
+          example: "Test user data for login scenarios"
+        fileType:
+          $ref: '#/components/schemas/DataFileType'
+        filePath:
+          type: string
+          readOnly: true
+        fileSize:
+          type: integer
+          format: int64
+          example: 10240
+        columnHeaders:
+          type: array
+          items:
+            $ref: '#/components/schemas/ColumnHeader'
+        rowCount:
+          type: integer
+          minimum: 1
+          example: 100
+        createdBy:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+
+    DataFileType:
+      type: string
+      enum: [csv, excel]
+
+    ColumnHeader:
+      type: object
+      required:
+        - name
+        - type
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          example: "username"
+        type:
+          type: string
+          enum: [string, number, boolean, date]
+        required:
+          type: boolean
+          default: false
+
+    TestExecution:
+      type: object
+      required:
+        - id
+        - scriptId
+        - projectId
+        - browserType
+        - executionMode
+        - status
+      properties:
+        id:
+          type: string
+          format: uuid
+        scriptId:
+          type: string
+          format: uuid
+        projectId:
+          type: string
+          format: uuid
+        executionName:
+          type: string
+          maxLength: 100
+          example: "Daily Regression Test"
+        browserType:
+          $ref: '#/components/schemas/BrowserType'
+        executionMode:
+          $ref: '#/components/schemas/ExecutionMode'
+        status:
+          $ref: '#/components/schemas/ExecutionStatus'
+        startedBy:
+          type: string
+          format: uuid
+        startedAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+          nullable: true
+        totalDurationMs:
+          type: integer
+          readOnly: true
+        totalSteps:
+          type: integer
+          readOnly: true
+        successfulSteps:
+          type: integer
+          readOnly: true
+        failedSteps:
+          type: integer
+          readOnly: true
+
+    BrowserType:
+      type: string
+      enum: [chrome, firefox, edge, safari]
+
+    ExecutionMode:
+      type: string
+      enum: [sequential, parallel, data_driven]
+
+    ExecutionStatus:
+      type: string
+      enum: [pending, running, completed, failed, cancelled]
+
+    TestCase:
+      type: object
+      required:
+        - id
+        - executionId
+        - dataRowIndex
+        - status
+      properties:
+        id:
+          type: string
+          format: uuid
+        executionId:
+          type: string
+          format: uuid
+        dataRowIndex:
+          type: integer
+          minimum: 0
+        status:
+          $ref: '#/components/schemas/CaseStatus'
+        startedAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+          nullable: true
+        durationMs:
+          type: integer
+          readOnly: true
+
+    CaseStatus:
+      type: string
+      enum: [pending, running, completed, failed, skipped]
+
+    VisualBaseline:
+      type: object
+      required:
+        - id
+        - scriptId
+        - stepIndex
+        - baselineName
+        - screenshotPath
+        - similarityThreshold
+      properties:
+        id:
+          type: string
+          format: uuid
+        scriptId:
+          type: string
+          format: uuid
+        stepIndex:
+          type: integer
+          minimum: 0
+        baselineName:
+          type: string
+          maxLength: 100
+        screenshotPath:
+          type: string
+          readOnly: true
+        similarityThreshold:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          default: 0.98
+        createdBy:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+
+    VisualComparison:
+      type: object
+      required:
+        - id
+        - baselineId
+        - similarityScore
+        - differencePercentage
+        - comparisonStatus
+      properties:
+        id:
+          type: string
+          format: uuid
+        baselineId:
+          type: string
+          format: uuid
+        testStepId:
+          type: string
+          format: uuid
+        currentScreenshotPath:
+          type: string
+          readOnly: true
+        similarityScore:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          example: 0.9542
+        differencePercentage:
+          type: number
+          minimum: 0.0
+          maximum: 100.0
+          example: 4.58
+        comparisonStatus:
+          $ref: '#/components/schemas/ComparisonStatus'
+        createdAt:
+          type: string
+          format: date-time
+
+    ComparisonStatus:
+      type: string
+      enum: [pending, passed, failed, error]
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+        - timestamp
+      properties:
+        error:
+          type: string
+          example: "VALIDATION_ERROR"
+        message:
+          type: string
+          example: "Invalid email format"
+        details:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+
+    PaginatedResponse:
+      type: object
+      required:
+        - data
+        - pagination
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+        pagination:
+          type: object
+          required:
+            - page
+            - limit
+            - total
+            - totalPages
+          properties:
+            page:
+              type: integer
+              minimum: 1
+            limit:
+              type: integer
+              minimum: 1
+              maximum: 100
+            total:
+              type: integer
+              minimum: 0
+            totalPages:
+              type: integer
+              minimum: 0
+
+paths:
+  /auth/login:
+    post:
+      summary: User login
+      tags: [Authentication]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/oauth/{provider}:
+    get:
+      summary: OAuth2 authorization
+      tags: [Authentication]
+      security: []
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [google, github, microsoft]
+      responses:
+        '302':
+          description: Redirect to provider
+
+  /auth/refresh:
+    post:
+      summary: Refresh access token
+      tags: [Authentication]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refreshToken]
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '200':
+          description: Token refreshed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+        '401':
+          description: Invalid refresh token
+
+  /users/profile:
+    get:
+      summary: Get user profile
+      tags: [Users]
+      responses:
+        '200':
+          description: User profile retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /teams:
+    get:
+      summary: Get user teams
+      tags: [Teams]
+      responses:
+        '200':
+          description: Teams retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse'
+        '401':
+          description: Unauthorized
+
+    post:
+      summary: Create team
+      tags: [Teams]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                  maxLength: 100
+                description:
+                  type: string
+      responses:
+        '201':
+          description: Team created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+
+  /projects:
+    get:
+      summary: Get projects
+      tags: [Projects]
+      parameters:
+        - name: teamId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+      responses:
+        '200':
+          description: Projects retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse'
+
+    post:
+      summary: Create project
+      tags: [Projects]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, teamId]
+              properties:
+                name:
+                  type: string
+                  maxLength: 100
+                description:
+                  type: string
+                teamId:
+                  type: string
+                  format: uuid
+                dataRetentionMonths:
+                  type: integer
+                  minimum: 1
+                  maximum: 60
+                  default: 12
+      responses:
+        '201':
+          description: Project created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+
+  /projects/{projectId}/scripts:
+    get:
+      summary: Get project scripts
+      tags: [Scripts]
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/ScriptStatus'
+      responses:
+        '200':
+          description: Scripts retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse'
+
+    post:
+      summary: Create test script
+      tags: [Scripts]
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, scriptContent]
+              properties:
+                name:
+                  type: string
+                  maxLength: 100
+                description:
+                  type: string
+                scriptContent:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/TestStep'
+                status:
+                  $ref: '#/components/schemas/ScriptStatus'
+                  default: draft
+      responses:
+        '201':
+          description: Script created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestScript'
+
+  /projects/{projectId}/data:
+    post:
+      summary: Upload test data file
+      tags: [Data]
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file, name]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                name:
+                  type: string
+                  maxLength: 100
+                description:
+                  type: string
+      responses:
+        '201':
+          description: Data file uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestDataFile'
+
+  /executions:
+    post:
+      summary: Start test execution
+      tags: [Executions]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [scriptId, browserType]
+              properties:
+                scriptId:
+                  type: string
+                  format: uuid
+                executionName:
+                  type: string
+                  maxLength: 100
+                browserType:
+                  $ref: '#/components/schemas/BrowserType'
+                executionMode:
+                  $ref: '#/components/schemas/ExecutionMode'
+                  default: sequential
+                dataFileId:
+                  type: string
+                  format: uuid
+      responses:
+        '201':
+          description: Execution started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestExecution'
+
+    get:
+      summary: Get executions
+      tags: [Executions]
+      parameters:
+        - name: projectId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/ExecutionStatus'
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+      responses:
+        '200':
+          description: Executions retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse'
+
+  /executions/{executionId}:
+    get:
+      summary: Get execution details
+      tags: [Executions]
+      parameters:
+        - name: executionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Execution details retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestExecution'
+
+    delete:
+      summary: Cancel execution
+      tags: [Executions]
+      parameters:
+        - name: executionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Execution cancelled
+
+  /executions/{executionId}/visual-baselines:
+    post:
+      summary: Create visual baseline
+      tags: [Visual Testing]
+      parameters:
+        - name: executionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [stepIndex, baselineName, screenshotFile]
+              properties:
+                stepIndex:
+                  type: integer
+                  minimum: 0
+                baselineName:
+                  type: string
+                  maxLength: 100
+                screenshotFile:
+                  type: string
+                  format: binary
+                similarityThreshold:
+                  type: number
+                  minimum: 0.0
+                  maximum: 1.0
+                  default: 0.98
+      responses:
+        '201':
+          description: Visual baseline created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VisualBaseline'
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Users
+    description: User profile management
+  - name: Teams
+    description: Team management and collaboration
+  - name: Projects
+    description: Project management and configuration
+  - name: Scripts
+    description: Test script creation and management
+  - name: Data
+    description: Test data file management
+  - name: Executions
+    description: Test execution monitoring and control
+  - name: Visual Testing
+    description: Visual baseline and comparison management

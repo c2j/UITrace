@@ -1,0 +1,226 @@
+# UITrace Platform - Comprehensive .gitignore
+
+# ==========================================
+# RUST / TAURI (Desktop Client)
+# ==========================================
+# Rust build artifacts
+target/
+Cargo.lock
+**/*.rs.bk
+*.pdb
+
+# Tauri specific
+src-tauri/target/
+
+# Rust dependency cache
+.cargo/
+
+# ==========================================
+# NODE.JS / VUE / NUXT (Frontend)
+# ==========================================
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Build outputs
+dist/
+.nuxt/
+.output/
+.cache/
+.parcel-cache/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE settings
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ==========================================
+# PYTHON / FASTAPI (Server Backend)
+# ==========================================
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Testing
+.pytest_cache/
+.coverage
+.hypothesis/
+.tox/
+.nox/
+coverage.xml
+*.cover
+*.py,cover
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+
+# PyCharm
+.idea/
+
+# ==========================================
+# DATABASE & STORAGE
+# ==========================================
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Application storage (user data)
+storage/scripts/*
+storage/data/*
+storage/screenshots/*
+storage/baselines/*
+storage/reports/*
+!storage/scripts/.gitkeep
+!storage/data/.gitkeep
+!storage/screenshots/.gitkeep
+!storage/baselines/.gitkeep
+!storage/reports/.gitkeep
+
+# Log files
+*.log
+logs/
+tmp/
+*.tmp
+*.temp
+
+# ==========================================
+# DOCKER
+# ==========================================
+.dockerignore
+docker-compose.override.yml
+
+# ==========================================
+# SECURITY & SECRETS
+# ==========================================
+# Certificates and keys
+*.pem
+*.key
+*.crt
+*.p12
+*.jks
+
+# Configuration with secrets
+config/secrets.json
+*.secret
+
+# ==========================================
+# BUILD ARTIFACTS
+# ==========================================
+# General build outputs
+build/
+out/
+target/
+
+# Archives
+*.tar.gz
+*.zip
+*.war
+*.ear
+*.jar
+
+# Package files
+*.deb
+*.rpm
+*.dmg
+*.pkg
+*.msi
+*.exe
+
+# ==========================================
+# TESTING & COVERAGE
+# ==========================================
+# Coverage reports
+coverage/
+.nyc_output
+test-results/
+junit.xml
+
+# ==========================================
+# DOCUMENTATION
+# ==========================================
+# Documentation build outputs
+docs/_build/
+docs/.doctrees/
+
+# ==========================================
+# DEPENDENCY DIRECTORIES
+# ==========================================
+vendor/
+third_party/
+
+# ==========================================
+# CACHE DIRECTORIES
+# ==========================================
+.cache/
+.eslintcache
+.stylelintcache
+*.swp
+*.swo
+
+# ==========================================
+# PROJECT SPECIFIC
+# ==========================================
+# Tauri specific
+.data/
+
+# Python specific
+.spip
+spip.egg-info
+
+# UI Trace specific patterns
+*.uitrace
+*.testresult

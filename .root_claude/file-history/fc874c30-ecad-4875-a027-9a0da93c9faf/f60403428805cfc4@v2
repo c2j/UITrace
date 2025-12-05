@@ -1,0 +1,389 @@
+# Data Model: UITrace Platform
+
+**Purpose**: Entity-relationship design for UITrace platform data storage
+**Created**: 2025-11-27
+**Status**: Phase 1 Design Complete
+
+## Core Entities
+
+### User Management
+
+#### Users Table
+```sql
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email VARCHAR(255) UNIQUE NOT NULL,
+    username VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255), -- NULL for OAuth2 users
+    oauth_provider VARCHAR(50), -- 'google', 'github', 'microsoft', NULL for local
+    oauth_id VARCHAR(255), -- Provider-specific user ID
+    role user_role NOT NULL DEFAULT 'tester',
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    last_login TIMESTAMP WITH TIME ZONE
+);
+
+CREATE TYPE user_role AS ENUM ('admin', 'tester', 'viewer');
+```
+
+#### Teams Table
+```sql
+CREATE TABLE teams (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_by UUID REFERENCES users(id),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE team_members (
+    team_id UUID REFERENCES teams(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    role team_member_role NOT NULL DEFAULT 'member',
+    joined_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    PRIMARY KEY (team_id, user_id)
+);
+
+CREATE TYPE team_member_role AS ENUM ('owner', 'maintainer', 'member', 'viewer');
+```
+
+### Project Management
+
+#### Projects Table
+```sql
+CREATE TABLE projects (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    team_id UUID REFERENCES teams(id) ON DELETE CASCADE,
+    created_by UUID REFERENCES users(id),
+    is_active BOOLEAN DEFAULT true,
+    data_retention_months INTEGER DEFAULT 12, -- Configurable per project
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+### Script Management
+
+#### TestScripts Table
+```sql
+CREATE TABLE test_scripts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    script_content JSONB NOT NULL, -- JSON structure with steps and selectors
+    version INTEGER NOT NULL DEFAULT 1,
+    status script_status NOT NULL DEFAULT 'draft',
+    locked_by UUID REFERENCES users(id), -- For collaboration locking
+    locked_at TIMESTAMP WITH TIME ZONE,
+    created_by UUID REFERENCES users(id),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+
+    UNIQUE(project_id, name, version)
+);
+
+CREATE TYPE script_status AS ENUM ('draft', 'ready', 'archived');
+```
+
+#### ScriptVersion History Table
+```sql
+CREATE TABLE script_versions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    script_id UUID REFERENCES test_scripts(id) ON DELETE CASCADE,
+    version INTEGER NOT NULL,
+    script_content JSONB NOT NULL,
+    change_description TEXT,
+    created_by UUID REFERENCES users(id),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+
+    UNIQUE(script_id, version)
+);
+```
+
+### Data-Driven Testing
+
+#### TestDataFiles Table
+```sql
+CREATE TABLE test_data_files (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    file_path VARCHAR(500) NOT NULL, -- Path to stored file
+    file_type data_file_type NOT NULL,
+    file_size BIGINT NOT NULL,
+    column_headers JSONB, -- JSON array of column names and types
+    row_count INTEGER NOT NULL,
+    created_by UUID REFERENCES users(id),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TYPE data_file_type AS ENUM ('csv', 'excel');
+```
+
+#### TestDataMappings Table
+```sql
+CREATE TABLE test_data_mappings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    script_id UUID REFERENCES test_scripts(id) ON DELETE CASCADE,
+    data_file_id UUID REFERENCES test_data_files(id) ON DELETE CASCADE,
+    variable_mappings JSONB NOT NULL, -- Map script variables to data columns
+    created_by UUID REFERENCES users(id),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+### Test Execution
+
+#### TestExecutions Table
+```sql
+CREATE TABLE test_executions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    script_id UUID REFERENCES test_scripts(id),
+    project_id UUID REFERENCES projects(id),
+    execution_name VARCHAR(100),
+    browser_type browser_type NOT NULL,
+    execution_mode execution_mode NOT NULL DEFAULT 'sequential',
+    status execution_status NOT NULL DEFAULT 'pending',
+    started_by UUID REFERENCES users(id),
+    started_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    completed_at TIMESTAMP WITH TIME ZONE,
+    total_duration_ms INTEGER, -- Total execution time in milliseconds
+    total_steps INTEGER,
+    successful_steps INTEGER,
+    failed_steps INTEGER
+);
+
+CREATE TYPE browser_type AS ENUM ('chrome', 'firefox', 'edge', 'safari');
+CREATE TYPE execution_mode AS ENUM ('sequential', 'parallel', 'data_driven');
+CREATE TYPE execution_status AS ENUM ('pending', 'running', 'completed', 'failed', 'cancelled');
+```
+
+#### TestCases Table
+```sql
+CREATE TABLE test_cases (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    execution_id UUID REFERENCES test_executions(id) ON DELETE CASCADE,
+    data_row_index INTEGER, -- For data-driven testing (0-based)
+    status case_status NOT NULL DEFAULT 'pending',
+    started_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    completed_at TIMESTAMP WITH TIME ZONE,
+    duration_ms INTEGER
+);
+
+CREATE TYPE case_status AS ENUM ('pending', 'running', 'completed', 'failed', 'skipped');
+```
+
+#### TestSteps Table
+```sql
+CREATE TABLE test_steps (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    test_case_id UUID REFERENCES test_cases(id) ON DELETE CASCADE,
+    step_index INTEGER NOT NULL, -- Order within the test case
+    step_type step_type NOT NULL,
+    element_selectors JSONB NOT NULL, -- Array of selector strategies
+    action_data JSONB, -- Input values, URLs, etc.
+    timeout_ms INTEGER DEFAULT 5000,
+    status step_status NOT NULL DEFAULT 'pending',
+    started_at TIMESTAMP WITH TIME ZONE,
+    completed_at TIMESTAMP WITH TIME ZONE,
+    duration_ms INTEGER,
+    error_message TEXT,
+    screenshot_before_path VARCHAR(500),
+    screenshot_after_path VARCHAR(500)
+);
+
+CREATE TYPE step_type AS ENUM ('navigate', 'click', 'type', 'assert_text', 'assert_url', 'screenshot', 'wait');
+CREATE TYPE step_status AS ENUM ('pending', 'running', 'completed', 'failed', 'skipped');
+```
+
+### Visual Validation
+
+#### VisualBaselines Table
+```sql
+CREATE TABLE visual_baselines (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    script_id UUID REFERENCES test_scripts(id) ON DELETE CASCADE,
+    step_index INTEGER NOT NULL,
+    baseline_name VARCHAR(100),
+    screenshot_path VARCHAR(500) NOT NULL,
+    similarity_threshold DECIMAL(3,2) DEFAULT 0.98, -- 98% threshold
+    created_by UUID REFERENCES users(id),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+
+    UNIQUE(script_id, step_index, baseline_name)
+);
+```
+
+#### VisualComparisons Table
+```sql
+CREATE TABLE visual_comparisons (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    baseline_id UUID REFERENCES visual_baselines(id) ON DELETE CASCADE,
+    test_step_id UUID REFERENCES test_steps(id) ON DELETE CASCADE,
+    current_screenshot_path VARCHAR(500) NOT NULL,
+    similarity_score DECIMAL(5,4) NOT NULL, -- 0.0000 to 1.0000
+    difference_percentage DECIMAL(5,2) NOT NULL, -- Percentage difference
+    comparison_status comparison_status NOT NULL DEFAULT 'pending',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TYPE comparison_status AS ENUM ('pending', 'passed', 'failed', 'error');
+```
+
+## Audit Trails
+
+#### AuditLogs Table
+```sql
+CREATE TABLE audit_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id),
+    project_id UUID REFERENCES projects(id),
+    action_type audit_action NOT NULL,
+    entity_type VARCHAR(50) NOT NULL, -- 'script', 'project', 'user', etc.
+    entity_id UUID,
+    old_values JSONB, -- Previous state (for updates)
+    new_values JSONB, -- New state (for creates/updates)
+    ip_address INET,
+    user_agent TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TYPE audit_action AS ENUM ('create', 'read', 'update', 'delete', 'execute', 'download', 'upload');
+```
+
+## Indexes for Performance
+
+```sql
+-- User and Team Indexes
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_oauth ON users(oauth_provider, oauth_id);
+CREATE INDEX idx_team_members_user ON team_members(user_id);
+CREATE INDEX idx_team_members_team ON team_members(team_id);
+
+-- Project and Script Indexes
+CREATE INDEX idx_projects_team ON projects(team_id);
+CREATE INDEX idx_projects_active ON projects(is_active);
+CREATE INDEX idx_test_scripts_project ON test_scripts(project_id);
+CREATE INDEX idx_test_scripts_status ON test_scripts(status);
+CREATE INDEX idx_script_versions_script ON script_versions(script_id);
+
+-- Test Execution Indexes
+CREATE INDEX idx_test_executions_project ON test_executions(project_id);
+CREATE INDEX idx_test_executions_started_by ON test_executions(started_by);
+CREATE INDEX idx_test_executions_status ON test_executions(status);
+CREATE INDEX idx_test_executions_started_at ON test_executions(started_at);
+
+-- Test Case and Step Indexes
+CREATE INDEX idx_test_cases_execution ON test_cases(execution_id);
+CREATE INDEX idx_test_steps_case ON test_steps(test_case_id);
+CREATE INDEX idx_test_steps_status ON test_steps(status);
+
+-- Visual Testing Indexes
+CREATE INDEX idx_visual_baselines_script ON visual_baselines(script_id);
+CREATE INDEX idx_visual_comparisons_baseline ON visual_comparisons(baseline_id);
+CREATE INDEX idx_visual_comparisons_step ON visual_comparisons(test_step_id);
+
+-- Audit Log Indexes
+CREATE INDEX idx_audit_logs_user ON audit_logs(user_id);
+CREATE INDEX idx_audit_logs_project ON audit_logs(project_id);
+CREATE INDEX idx_audit_logs_created_at ON audit_logs(created_at);
+```
+
+## Data Validation Rules
+
+### Script Content Validation
+```json
+{
+  "script_schema": {
+    "type": "array",
+    "items": {
+      "type": "object",
+      "required": ["step_id", "action", "selectors"],
+      "properties": {
+        "step_id": {"type": "integer", "minimum": 1},
+        "name": {"type": "string", "maxLength": 200},
+        "action": {
+          "type": "string",
+          "enum": ["navigate", "click", "type", "assert_text", "assert_url", "screenshot", "wait"]
+        },
+        "value": {"type": "string"},
+        "expected_value": {"type": "string"},
+        "timeout_seconds": {"type": "integer", "minimum": 1, "maximum": 300},
+        "selectors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type", "value"],
+            "properties": {
+              "type": {"type": "string", "enum": ["id", "css", "xpath", "name"]},
+              "value": {"type": "string", "minLength": 1}
+            }
+          },
+          "minItems": 1,
+          "maxItems": 5
+        }
+      }
+    }
+  }
+}
+```
+
+### Data File Validation Rules
+- CSV files must have headers
+- Excel files limited to 10,000 rows per file
+- File size limited to 50MB per data file
+- Column names limited to 100 characters
+- Data values limited to 1000 characters per cell
+
+### Project Retention Policy
+- Default retention: 12 months
+- Minimum retention: 1 month
+- Maximum retention: 60 months
+- Automatic cleanup runs weekly
+- Audit logs retained for 6 months regardless of project settings
+
+## Performance Considerations
+
+### Database Optimization
+- Use connection pooling (max 20 connections)
+- Implement read replicas for reporting queries
+- Partition test_executions by month for large datasets
+- Archive completed executions older than retention period
+
+### Caching Strategy
+- Cache active user sessions in Redis (30-minute TTL)
+- Cache script content for frequently executed scripts (1-hour TTL)
+- Cache project metadata (5-minute TTL)
+- Cache team membership information (1-hour TTL)
+
+### File Storage
+- Test scripts: Stored in database as JSONB with compression
+- Screenshots: Stored in file system with database references
+- Data files: Stored in encrypted file system with database metadata
+- Backup strategy: Daily database backups, weekly file system backups
+
+## Security Considerations
+
+### Data Encryption
+- Sensitive test data encrypted at rest using AES-256
+- Database connections use TLS 1.3
+- File system encryption for screenshot and data file storage
+- API keys and secrets stored in environment variables or secret manager
+
+### Access Control
+- Row-level security for multi-tenant data isolation
+- User-based permissions inherited from team membership
+- Project-level access control with role inheritance
+- Audit logging for all data access and modifications
+
+### Data Privacy
+- Personal data in test scripts automatically detected and masked
+- PII detection in uploaded data files
+- Option to exclude sensitive data from test reports
+- Compliance with GDPR and data protection regulations

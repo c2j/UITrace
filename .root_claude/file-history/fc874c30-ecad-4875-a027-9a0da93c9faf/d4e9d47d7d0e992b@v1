@@ -1,0 +1,11 @@
+Desktop/node_modules
+.DS_Store
+*.log*
+Desktop/.data
+Desktop/.nuxt
+Desktop/.nitro
+Desktop/.cache
+Desktop/.output
+Desktop/.env
+Desktop/.cargo
+Desktop/dist
