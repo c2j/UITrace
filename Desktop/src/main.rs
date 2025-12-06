@@ -23,12 +23,13 @@ async fn main() {
             commands::recorder::start_recording,
             commands::recorder::stop_recording,
             commands::recorder::save_recording,
+            commands::recorder::load_recording,
+            commands::recorder::capture_dom_event,
             commands::executor::execute_script,
             commands::executor::stop_execution,
-            commands::visual::take_screenshot,
-            commands::visual::compare_images,
-            commands::data::load_test_data,
-            commands::data::save_test_data,
+            commands::executor::get_execution_status,
+            // Visual commands will be enabled in User Story 4
+            // Data commands will be enabled in User Story 3
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -46,12 +46,8 @@ pub fn run() {
 			uitrace_desktop_lib::commands::executor::execute_script,
 			uitrace_desktop_lib::commands::executor::stop_execution,
 			uitrace_desktop_lib::commands::executor::get_execution_status,
-			uitrace_desktop_lib::commands::visual::take_screenshot,
-			uitrace_desktop_lib::commands::visual::compare_images,
-			uitrace_desktop_lib::commands::visual::create_baseline,
-			uitrace_desktop_lib::commands::data::load_test_data,
-			uitrace_desktop_lib::commands::data::validate_test_data,
-			uitrace_desktop_lib::commands::data::substitute_variables,
+			// Visual commands will be enabled in User Story 4
+			// Data commands will be enabled in User Story 3
 		])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

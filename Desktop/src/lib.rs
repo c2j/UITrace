@@ -3,9 +3,9 @@ use tauri::{AppHandle, Manager};
 
 pub mod models;
 pub mod recorder;
-pub mod executor;
-pub mod visual;
-pub mod data;
+// pub mod executor; // Will be enabled in User Story 2
+// pub mod visual; // Will be enabled in User Story 4
+// pub mod data; // Will be enabled in User Story 3
 pub mod services;
 pub mod utils;
 
@@ -15,9 +15,9 @@ pub mod commands;
 // Re-export commonly used types
 pub use models::*;
 pub use recorder::*;
-pub use executor::*;
-pub use visual::*;
-pub use data::*;
+// pub use executor::*; // Will be enabled in User Story 2
+// pub use visual::*; // Will be enabled in User Story 4
+// pub use data::*; // Will be enabled in User Story 3
 pub use services::*;
 pub use utils::*;
 
