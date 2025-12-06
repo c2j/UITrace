@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UITrace Recorder - Options</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>UITrace Recorder Options</h1>
+    </header>
+
+    <main class="main-content">
+      <!-- General Settings -->
+      <section class="settings-section">
+        <h2 class="section-title">Recording Settings</h2>
+
+        <div class="setting-item">
+          <label class="setting-label">
+            <input type="checkbox" id="captureScreenshots" class="setting-checkbox">
+            <span class="setting-text">Capture screenshots on click</span>
+          </label>
+          <p class="setting-description">Take a screenshot when recording click events</p>
+        </div>
+
+        <div class="setting-item">
+          <label class="setting-label">
+            <input type="checkbox" id="highlightElements" class="setting-checkbox">
+            <span class="setting-text">Highlight elements on hover</span>
+          </label>
+          <p class="setting-description">Show visual feedback when hovering over elements during recording</p>
+        </div>
+
+        <div class="setting-item">
+          <label class="setting-label">
+            <input type="checkbox" id="autoWait" class="setting-checkbox">
+            <span class="setting-text">Auto-insert wait commands</span>
+          </label>
+          <p class="setting-description">Automatically add wait commands between events with delays</p>
+        </div>
+
+        <div class="setting-item">
+          <label for="waitThreshold" class="setting-label-inline">
+            Wait threshold (ms):
+            <input type="number" id="waitThreshold" class="setting-input" min="100" max="10000" step="100">
+          </label>
+          <p class="setting-description">Minimum delay before auto-inserting a wait command</p>
+        </div>
+      </section>
+
+      <!-- Ignore Elements -->
+      <section class="settings-section">
+        <h2 class="section-title">Ignore Elements</h2>
+        <p class="section-description">Don't record interactions with these element types</p>
+
+        <div class="setting-item">
+          <div class="checkbox-group">
+            <label class="setting-label">
+              <input type="checkbox" name="ignoreElements" value="script" class="setting-checkbox">
+              <span class="setting-text">Script tags</span>
+            </label>
+            <label class="setting-label">
+              <input type="checkbox" name="ignoreElements" value="style" class="setting-checkbox">
+              <span class="setting-text">Style tags</span>
+            </label>
+            <label class="setting-label">
+              <input type="checkbox" name="ignoreElements" value="meta" class="setting-checkbox">
+              <span class="setting-text">Meta tags</span>
+            </label>
+            <label class="setting-label">
+              <input type="checkbox" name="ignoreElements" value="link" class="setting-checkbox">
+              <span class="setting-text">Link tags</span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Selector Preferences -->
+      <section class="settings-section">
+        <h2 class="section-title">Selector Preferences</h2>
+        <p class="section-description">Choose your preferred selector strategy (in order of preference)</p>
+
+        <div class="setting-item">
+          <div id="selectorPreferences" class="sortable-list">
+            <div class="sortable-item" data-value="id">
+              <span class="drag-handle">☰</span>
+              <input type="checkbox" checked class="setting-checkbox">
+              <span class="setting-text">ID selectors</span>
+            </div>
+            <div class="sortable-item" data-value="dataTestId">
+              <span class="drag-handle">☰</span>
+              <input type="checkbox" checked class="setting-checkbox">
+              <span class="setting-text">Data-testid selectors</span>
+            </div>
+            <div class="sortable-item" data-value="name">
+              <span class="drag-handle">☰</span>
+              <input type="checkbox" checked class="setting-checkbox">
+              <span class="setting-text">Name attribute</span>
+            </div>
+            <div class="sortable-item" data-value="class">
+              <span class="drag-handle">☰</span>
+              <input type="checkbox" checked class="setting-checkbox">
+              <span class="setting-text">CSS selectors</span>
+            </div>
+            <div class="sortable-item" data-value="xpath">
+              <span class="drag-handle">☰</span>
+              <input type="checkbox" class="setting-checkbox">
+              <span class="setting-text">XPath expressions</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Desktop Integration -->
+      <section class="settings-section">
+        <h2 class="section-title">Desktop Integration</h2>
+
+        <div class="setting-item">
+          <label for="desktopPort" class="setting-label-inline">
+            Desktop App Port:
+            <input type="number" id="desktopPort" class="setting-input" min="1000" max="65535" value="54321">
+          </label>
+          <p class="setting-description">Port for communicating with the UITrace desktop application</p>
+        </div>
+
+        <div class="setting-item">
+          <button class="btn btn-secondary" id="testConnection">
+            Test Desktop Connection
+          </button>
+        </div>
+      </section>
+
+      <!-- Data Management -->
+      <section class="settings-section">
+        <h2 class="section-title">Data Management</h2>
+
+        <div class="setting-item">
+          <button class="btn btn-secondary" id="exportSettings">Export Settings</button>
+          <button class="btn btn-secondary" id="importSettings">Import Settings</button>
+          <input type="file" id="settingsFile" accept=".json" style="display: none;">
+        </div>
+
+        <div class="setting-item">
+          <button class="btn btn-danger" id="clearData">Clear All Data</button>
+          <p class="setting-description">Delete all recorded sessions and reset settings</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <button class="btn btn-primary" id="saveSettings">Save Settings</button>
+      <button class="btn btn-secondary" id="resetSettings">Reset to Default</button>
+    </footer>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

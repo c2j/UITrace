@@ -1,43 +1,85 @@
-"""
-Database configuration and session management
-"""
+"""Database configuration and session management."""
+
+from typing import AsyncGenerator
 
 from sqlalchemy import create_engine, MetaData
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
-from sqlalchemy.pool import QueuePool
-from typing import Generator
+from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from sqlalchemy.pool import NullPool, QueuePool
 import structlog
 
 from app.core.config import settings
 
 logger = structlog.get_logger()
 
-# Create database engine with connection pooling
-engine = create_engine(
-    settings.DATABASE_URL,
+# Create async database engine
+async_engine = create_async_engine(
+    str(settings.DATABASE_URL),
     poolclass=QueuePool,
     pool_size=settings.DATABASE_POOL_SIZE,
     max_overflow=settings.DATABASE_MAX_OVERFLOW,
     pool_timeout=settings.DATABASE_POOL_TIMEOUT,
     pool_pre_ping=True,  # Verify connections before using them
     echo=settings.DEBUG,  # SQL logging in debug mode
+    future=True,
 )
 
-# Create session factory
+# Create sync database engine for migrations
+sync_engine = create_engine(
+    str(settings.DATABASE_URL).replace("+asyncpg", ""),
+    poolclass=QueuePool,
+    pool_size=settings.DATABASE_POOL_SIZE,
+    max_overflow=settings.DATABASE_MAX_OVERFLOW,
+    pool_timeout=settings.DATABASE_POOL_TIMEOUT,
+    pool_pre_ping=True,
+    echo=settings.DEBUG,
+)
+
+# Create async session factory
+AsyncSessionLocal = async_sessionmaker(
+    async_engine,
+    class_=AsyncSession,
+    expire_on_commit=False,
+    autocommit=False,
+    autoflush=False,
+)
+
+# Create sync session factory
 SessionLocal = sessionmaker(
     autocommit=False,
     autoflush=False,
-    bind=engine
+    bind=sync_engine
 )
 
 # Create base class for models
-Base = declarative_base()
-metadata = MetaData(schema="uitrace")
+class Base(DeclarativeBase):
+    """Base class for all database models."""
+    pass
+
+metadata = MetaData(naming_convention={
+    "ix": "ix_%(column_0_label)s",
+    "uq": "uq_%(table_name)s_%(column_0_name)s",
+    "ck": "ck_%(table_name)s_%(constraint_name)s",
+    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+    "pk": "pk_%(table_name)s"
+})
 
 
-def get_db() -> Generator[Session, None, None]:
-    """Get database session"""
+async def get_async_db() -> AsyncGenerator[AsyncSession, None]:
+    """Get async database session."""
+    async with AsyncSessionLocal() as session:
+        try:
+            yield session
+        except Exception:
+            await session.rollback()
+            raise
+        finally:
+            await session.close()
+
+
+def get_db():
+    """Get sync database session."""
     db = SessionLocal()
     try:
         yield db
@@ -45,28 +87,35 @@ def get_db() -> Generator[Session, None, None]:
         db.close()
 
 
-def init_db():
-    """Initialize database - create all tables"""
+async def init_db() -> None:
+    """Initialize database - create all tables."""
     logger.info("Initializing database")
-    Base.metadata.create_all(bind=engine)
+    async with async_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
     logger.info("Database initialization complete")
 
 
-def drop_db():
-    """Drop all database tables - use with caution"""
+async def drop_db() -> None:
+    """Drop all database tables - use with caution."""
     logger.warning("Dropping all database tables")
-    Base.metadata.drop_all(bind=engine)
+    async with async_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
     logger.info("Database tables dropped")
 
 
-def check_db_connection() -> bool:
-    """Check if database connection is working"""
+async def check_db_connection() -> bool:
+    """Check if database connection is working."""
     try:
-        db = SessionLocal()
-        db.execute("SELECT 1")
-        db.close()
+        async with async_engine.begin() as conn:
+            await conn.execute("SELECT 1")
         logger.info("Database connection check successful")
         return True
     except Exception as e:
         logger.error("Database connection check failed", error=str(e))
         return False
+
+
+async def close_db() -> None:
+    """Close database connections."""
+    logger.info("Closing database connections")
+    await async_engine.dispose()

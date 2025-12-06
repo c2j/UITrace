@@ -57,6 +57,44 @@ async fn execute_script(script_id: String) -> Result<ApiResponse<ExecutionResult
     Ok(ApiResponse::success(result))
 }
 
+#[tauri::command]
+async fn get_script(script_id: String) -> Result<TestScript, String> {
+    info!("Getting script: {}", script_id);
+
+    // TODO: Implement actual script loading from storage
+    // For now, return a sample script
+    let mut script = TestScript::new("Sample Script".to_string(), Some("A sample test script".to_string()));
+
+    Ok(script)
+}
+
+#[tauri::command]
+async fn create_script(script: TestScript) -> Result<TestScript, String> {
+    info!("Creating new script: {}", script.name);
+
+    // TODO: Implement actual script saving to storage
+
+    Ok(script)
+}
+
+#[tauri::command]
+async fn update_script(script: TestScript) -> Result<TestScript, String> {
+    info!("Updating script: {}", script.name);
+
+    // TODO: Implement actual script updating in storage
+
+    Ok(script)
+}
+
+#[tauri::command]
+async fn delete_script(script_id: String) -> Result<(), String> {
+    info!("Deleting script: {}", script_id);
+
+    // TODO: Implement actual script deletion from storage
+
+    Ok(())
+}
+
 fn main() {
     // Initialize logging
     tracing_subscriber::registry()
@@ -82,7 +120,11 @@ fn main() {
             greet,
             create_test_script,
             get_script_info,
-            execute_script
+            execute_script,
+            get_script,
+            create_script,
+            update_script,
+            delete_script
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

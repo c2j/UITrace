@@ -1,303 +1,453 @@
-"""
-Project and script models
-"""
+"""Project model for UITrace platform."""
 
-from sqlalchemy import Column, String, Boolean, DateTime, Enum, Text, Integer, ForeignKey, JSON
-from sqlalchemy.dialects.postgresql import UUID
+from datetime import datetime
+from typing import List, Optional
+
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
-from sqlalchemy.orm import relationship
 import uuid
-import enum
 
-from app.db import Base
-
-
-class ScriptStatus(enum.Enum):
-    """Script status enumeration"""
-    DRAFT = "draft"
-    READY = "ready"
-    ARCHIVED = "archived"
-
-
-class ExecutionStatus(enum.Enum):
-    """Execution status enumeration"""
-    PENDING = "pending"
-    RUNNING = "running"
-    COMPLETED = "completed"
-    FAILED = "failed"
-    CANCELLED = "cancelled"
-
-
-class BrowserType(enum.Enum):
-    """Browser type enumeration"""
-    CHROME = "chrome"
-    FIREFOX = "firefox"
-    EDGE = "edge"
-    SAFARI = "safari"
-
-
-class ExecutionMode(enum.Enum):
-    """Execution mode enumeration"""
-    SEQUENTIAL = "sequential"
-    PARALLEL = "parallel"
-    DATA_DRIVEN = "data_driven"
-
-
-class CaseStatus(enum.Enum):
-    """Test case status enumeration"""
-    PENDING = "pending"
-    RUNNING = "running"
-    COMPLETED = "completed"
-    FAILED = "failed"
-    SKIPPED = "skipped"
-
-
-class StepType(enum.Enum):
-    """Step type enumeration"""
-    NAVIGATE = "navigate"
-    CLICK = "click"
-    TYPE = "type"
-    ASSERT_TEXT = "assert_text"
-    ASSERT_URL = "assert_url"
-    SCREENSHOT = "screenshot"
-    WAIT = "wait"
-
-
-class StepStatus(enum.Enum):
-    """Step status enumeration"""
-    PENDING = "pending"
-    RUNNING = "running"
-    COMPLETED = "completed"
-    FAILED = "failed"
-    SKIPPED = "skipped"
-
-
-class ComparisonStatus(enum.Enum):
-    """Visual comparison status enumeration"""
-    PENDING = "pending"
-    PASSED = "passed"
-    FAILED = "failed"
-    ERROR = "error"
-
-
-class DataFileType(enum.Enum):
-    """Data file type enumeration"""
-    CSV = "csv"
-    EXCEL = "excel"
+from app.core.database import Base
 
 
 class Project(Base):
-    """Project model"""
+    """Project model for organizing test scripts and executions."""
+
     __tablename__ = "projects"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    name = Column(String(100), nullable=False)
-    description = Column(Text, nullable=True)
-    team_id = Column(UUID(as_uuid=True), ForeignKey("teams.id"), nullable=True)
-    created_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
-    is_active = Column(Boolean, default=True, nullable=False)
-    data_retention_months = Column(Integer, default=12, nullable=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+    # Primary key
+    id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+        index=True
+    )
 
-    def __repr__(self):
-        return f"<Project(id={self.id}, name='{self.name}')>"
+    # Project information
+    name: Mapped[str] = mapped_column(
+        String(100),
+        nullable=False
+    )
+    slug: Mapped[str] = mapped_column(
+        String(100),
+        unique=True,
+        nullable=False,
+        index=True
+    )
+    description: Mapped[Optional[str]] = mapped_column(
+        Text,
+        nullable=True
+    )
+    avatar_url: Mapped[Optional[str]] = mapped_column(
+        String(500),
+        nullable=True
+    )
 
+    # Ownership and team
+    owner_id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id"),
+        nullable=False,
+        index=True
+    )
+    team_id: Mapped[Optional[UUID]] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("teams.id"),
+        nullable=True,
+        index=True
+    )
 
-class TestScript(Base):
-    """Test script model"""
-    __tablename__ = "test_scripts"
+    # Project settings
+    is_active: Mapped[bool] = mapped_column(
+        Boolean,
+        default=True,
+        nullable=False
+    )
+    is_public: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        nullable=False
+    )
+    data_retention_months: Mapped[int] = mapped_column(
+        Integer,
+        default=12,
+        nullable=False
+    )
+    settings: Mapped[Optional[dict]] = mapped_column(
+        JSONB,
+        nullable=True,
+        default=lambda: {}
+    )
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    project_id = Column(UUID(as_uuid=True), ForeignKey("projects.id"), nullable=False)
-    name = Column(String(100), nullable=False)
-    description = Column(Text, nullable=True)
-    script_content = Column(JSON, nullable=False)  # JSON structure with steps and selectors
-    version = Column(Integer, nullable=False, default=1)
-    status = Column(Enum(ScriptStatus), nullable=False, default=ScriptStatus.DRAFT)
-    locked_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
-    locked_at = Column(DateTime(timezone=True), nullable=True)
-    created_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+    # Quotas
+    max_scripts: Mapped[Optional[int]] = mapped_column(
+        Integer,
+        nullable=True
+    )
+    max_executions_per_day: Mapped[Optional[int]] = mapped_column(
+        Integer,
+        nullable=True
+    )
 
-    def __repr__(self):
-        return f"<TestScript(id={self.id}, name='{self.name}', version={self.version})>"
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False
+    )
+    archived_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True
+    )
 
+    # Relationships
+    owner: Mapped["User"] = relationship(
+        "User",
+        back_populates="projects"
+    )
+    team: Mapped[Optional["Team"]] = relationship(
+        "Team",
+        back_populates="projects"
+    )
+    scripts: Mapped[List["Script"]] = relationship(
+        "Script",
+        back_populates="project",
+        cascade="all, delete-orphan"
+    )
+    executions: Mapped[List["Execution"]] = relationship(
+        "Execution",
+        back_populates="project",
+        cascade="all, delete-orphan"
+    )
+    data_files: Mapped[List["DataFile"]] = relationship(
+        "DataFile",
+        back_populates="project",
+        cascade="all, delete-orphan"
+    )
+    environments: Mapped[List["Environment"]] = relationship(
+        "Environment",
+        back_populates="project",
+        cascade="all, delete-orphan"
+    )
+    webhooks: Mapped[List["Webhook"]] = relationship(
+        "Webhook",
+        back_populates="project",
+        cascade="all, delete-orphan"
+    )
 
-class ScriptVersion(Base):
-    """Script version history model"""
-    __tablename__ = "script_versions"
-
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    script_id = Column(UUID(as_uuid=True), ForeignKey("test_scripts.id"), nullable=False)
-    version = Column(Integer, nullable=False)
-    script_content = Column(JSON, nullable=False)
-    change_description = Column(Text, nullable=True)
-    created_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-
-    def __repr__(self):
-        return f"<ScriptVersion(id={self.id}, script_id={self.script_id}, version={self.version})>"
-
-
-class TestDataFile(Base):
-    """Test data file model"""
-    __tablename__ = "test_data_files"
-
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    project_id = Column(UUID(as_uuid=True), ForeignKey("projects.id"), nullable=False)
-    name = Column(String(100), nullable=False)
-    description = Column(Text, nullable=True)
-    file_path = Column(String(500), nullable=False)
-    file_type = Column(Enum(DataFileType), nullable=False)
-    file_size = Column(Integer, nullable=False)
-    column_headers = Column(JSON, nullable=True)  # JSON array of column names and types
-    row_count = Column(Integer, nullable=False)
-    created_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-
-    def __repr__(self):
-        return f"<TestDataFile(id={self.id}, name='{self.name}', type={self.file_type})>"
-
-
-class TestDataMapping(Base):
-    """Test data mapping model"""
-    __tablename__ = "test_data_mappings"
-
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    script_id = Column(UUID(as_uuid=True), ForeignKey("test_scripts.id"), nullable=False)
-    data_file_id = Column(UUID(as_uuid=True), ForeignKey("test_data_files.id"), nullable=False)
-    variable_mappings = Column(JSON, nullable=False)  # Map script variables to data columns
-    created_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-
-    def __repr__(self):
-        return f"<TestDataMapping(id={self.id}, script_id={self.script_id}, data_file_id={self.data_file_id})>"
-
-
-class TestExecution(Base):
-    """Test execution model"""
-    __tablename__ = "test_executions"
-
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    script_id = Column(UUID(as_uuid=True), ForeignKey("test_scripts.id"), nullable=False)
-    project_id = Column(UUID(as_uuid=True), ForeignKey("projects.id"), nullable=False)
-    execution_name = Column(String(100), nullable=True)
-    browser_type = Column(Enum(BrowserType), nullable=False)
-    execution_mode = Column(Enum(ExecutionMode), nullable=False, default=ExecutionMode.SEQUENTIAL)
-    status = Column(Enum(ExecutionStatus), nullable=False, default=ExecutionStatus.PENDING)
-    started_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
-    started_at = Column(DateTime(timezone=True), nullable=True)
-    completed_at = Column(DateTime(timezone=True), nullable=True)
-    total_duration_ms = Column(Integer, nullable=True)
-    total_steps = Column(Integer, nullable=True)
-    successful_steps = Column(Integer, nullable=True)
-    failed_steps = Column(Integer, nullable=True)
-
-    def __repr__(self):
-        return f"<TestExecution(id={self.id}, script_id={self.script_id}, status={self.status})>"
-
-
-class TestCase(Base):
-    """Test case model"""
-    __tablename__ = "test_cases"
-
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    execution_id = Column(UUID(as_uuid=True), ForeignKey("test_executions.id"), nullable=False)
-    data_row_index = Column(Integer, nullable=True)  # For data-driven testing (0-based)
-    status = Column(Enum(CaseStatus), nullable=False, default=CaseStatus.PENDING)
-    started_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    completed_at = Column(DateTime(timezone=True), nullable=True)
-    duration_ms = Column(Integer, nullable=True)
-
-    def __repr__(self):
-        return f"<TestCase(id={self.id}, execution_id={self.execution_id}, status={self.status})>"
-
-
-class TestStep(Base):
-    """Test step model"""
-    __tablename__ = "test_steps"
-
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    test_case_id = Column(UUID(as_uuid=True), ForeignKey("test_cases.id"), nullable=False)
-    step_index = Column(Integer, nullable=False)  # Order within the test case
-    step_type = Column(Enum(StepType), nullable=False)
-    element_selectors = Column(JSON, nullable=False)  # Array of selector strategies
-    action_data = Column(JSON, nullable=True)  # Input values, URLs, etc.
-    timeout_ms = Column(Integer, default=5000, nullable=False)
-    status = Column(Enum(StepStatus), nullable=False, default=StepStatus.PENDING)
-    started_at = Column(DateTime(timezone=True), nullable=True)
-    completed_at = Column(DateTime(timezone=True), nullable=True)
-    duration_ms = Column(Integer, nullable=True)
-    error_message = Column(Text, nullable=True)
-    screenshot_before_path = Column(String(500), nullable=True)
-    screenshot_after_path = Column(String(500), nullable=True)
-
-    def __repr__(self):
-        return f"<TestStep(id={self.id}, test_case_id={self.test_case_id}, step_index={self.step_index})>"
+    def __repr__(self) -> str:
+        """Represent project as string."""
+        return f"<Project(id={self.id}, name={self.name}, slug={self.slug})>"
 
 
-class VisualBaseline(Base):
-    """Visual baseline model"""
-    __tablename__ = "visual_baselines"
+class Environment(Base):
+    """Environment configuration for projects."""
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    script_id = Column(UUID(as_uuid=True), ForeignKey("test_scripts.id"), nullable=False)
-    step_index = Column(Integer, nullable=False)
-    baseline_name = Column(String(100), nullable=True)
-    screenshot_path = Column(String(500), nullable=False)
-    similarity_threshold = Column(Integer, default=98, nullable=False)  # 98% threshold
-    created_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    __tablename__ = "environments"
 
-    def __repr__(self):
-        return f"<VisualBaseline(id={self.id}, script_id={self.script_id}, step_index={self.step_index})>"
+    # Primary key
+    id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+        index=True
+    )
+
+    # Environment information
+    project_id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("projects.id"),
+        nullable=False,
+        index=True
+    )
+    name: Mapped[str] = mapped_column(
+        String(100),
+        nullable=False
+    )
+    slug: Mapped[str] = mapped_column(
+        String(100),
+        nullable=False
+    )
+    description: Mapped[Optional[str]] = mapped_column(
+        Text,
+        nullable=True
+    )
+
+    # Environment configuration
+    base_url: Mapped[Optional[str]] = mapped_column(
+        String(500),
+        nullable=True
+    )
+    variables: Mapped[Optional[dict]] = mapped_column(
+        JSONB,
+        nullable=True,
+        default=lambda: {}
+    )
+    headers: Mapped[Optional[dict]] = mapped_column(
+        JSONB,
+        nullable=True,
+        default=lambda: {}
+    )
+    credentials: Mapped[Optional[dict]] = mapped_column(
+        JSONB,
+        nullable=True
+    )
+
+    # Environment type
+    environment_type: Mapped[str] = mapped_column(
+        String(50),
+        default="testing",
+        nullable=False
+    )
+    is_default: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        nullable=False
+    )
+    is_active: Mapped[bool] = mapped_column(
+        Boolean,
+        default=True,
+        nullable=False
+    )
+
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False
+    )
+    created_by: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id"),
+        nullable=False
+    )
+
+    # Relationships
+    project: Mapped["Project"] = relationship(
+        "Project",
+        back_populates="environments"
+    )
+    creator: Mapped["User"] = relationship()
 
 
-class VisualComparison(Base):
-    """Visual comparison model"""
-    __tablename__ = "visual_comparisons"
+class DataFile(Base):
+    """Data files for parameterized testing."""
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    baseline_id = Column(UUID(as_uuid=True), ForeignKey("visual_baselines.id"), nullable=False)
-    test_step_id = Column(UUID(as_uuid=True), ForeignKey("test_steps.id"), nullable=False)
-    current_screenshot_path = Column(String(500), nullable=False)
-    similarity_score = Column(Integer, nullable=False)  # 0-10000 (represents 0.0000 to 1.0000)
-    difference_percentage = Column(Integer, nullable=False)  # Percentage difference
-    comparison_status = Column(Enum(ComparisonStatus), nullable=False, default=ComparisonStatus.PENDING)
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    __tablename__ = "data_files"
 
-    def __repr__(self):
-        return f"<VisualComparison(id={self.id}, baseline_id={self.baseline_id}, test_step_id={self.test_step_id})>"
+    # Primary key
+    id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+        index=True
+    )
+
+    # File information
+    project_id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("projects.id"),
+        nullable=False,
+        index=True
+    )
+    name: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False
+    )
+    description: Mapped[Optional[str]] = mapped_column(
+        Text,
+        nullable=True
+    )
+    file_path: Mapped[str] = mapped_column(
+        String(500),
+        nullable=False
+    )
+    file_type: Mapped[str] = mapped_column(
+        String(50),
+        nullable=False
+    )
+    mime_type: Mapped[str] = mapped_column(
+        String(100),
+        nullable=False
+    )
+    file_size: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False
+    )
+
+    # File metadata
+    headers: Mapped[Optional[List[dict]]] = mapped_column(
+        JSONB,
+        nullable=True
+    )
+    row_count: Mapped[Optional[int]] = mapped_column(
+        Integer,
+        nullable=True
+    )
+    column_count: Mapped[Optional[int]] = mapped_column(
+        Integer,
+        nullable=True
+    )
+    checksum: Mapped[str] = mapped_column(
+        String(64),
+        nullable=False
+    )
+
+    # File status
+    is_active: Mapped[bool] = mapped_column(
+        Boolean,
+        default=True,
+        nullable=False
+    )
+    is_processed: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        nullable=False
+    )
+
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False
+    )
+    created_by: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id"),
+        nullable=False
+    )
+
+    # Relationships
+    project: Mapped["Project"] = relationship(
+        "Project",
+        back_populates="data_files"
+    )
+    creator: Mapped["User"] = relationship()
 
 
-class AuditAction(enum.Enum):
-    """Audit action enumeration"""
-    CREATE = "create"
-    READ = "read"
-    UPDATE = "update"
-    DELETE = "delete"
-    EXECUTE = "execute"
-    DOWNLOAD = "download"
-    UPLOAD = "upload"
+class Webhook(Base):
+    """Webhooks for project events."""
 
+    __tablename__ = "webhooks"
 
-class AuditLog(Base):
-    """Audit log model"""
-    __tablename__ = "audit_logs"
+    # Primary key
+    id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+        index=True
+    )
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
-    project_id = Column(UUID(as_uuid=True), ForeignKey("projects.id"), nullable=True)
-    action = Column(Enum(AuditAction), nullable=False)
-    entity_type = Column(String(50), nullable=False)  # 'script', 'project', 'user', etc.
-    entity_id = Column(UUID(as_uuid=True), nullable=True)
-    old_values = Column(JSON, nullable=True)  # Previous state (for updates)
-    new_values = Column(JSON, nullable=True)  # New state (for creates/updates)
-    ip_address = Column(String(45), nullable=True)  # IPv6 support
-    user_agent = Column(Text, nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    # Webhook information
+    project_id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("projects.id"),
+        nullable=False,
+        index=True
+    )
+    name: Mapped[str] = mapped_column(
+        String(100),
+        nullable=False
+    )
+    url: Mapped[str] = mapped_column(
+        String(500),
+        nullable=False
+    )
+    description: Mapped[Optional[str]] = mapped_column(
+        Text,
+        nullable=True
+    )
 
-    def __repr__(self):
-        return f"<AuditLog(id={self.id}, user_id={self.user_id}, action={self.action}, entity_type={self.entity_type})>"
+    # Webhook configuration
+    events: Mapped[List[str]] = mapped_column(
+        JSONB,
+        nullable=False,
+        default=lambda: []
+    )
+    secret: Mapped[Optional[str]] = mapped_column(
+        String(255),
+        nullable=True
+    )
+    headers: Mapped[Optional[dict]] = mapped_column(
+        JSONB,
+        nullable=True,
+        default=lambda: {}
+    )
+
+    # Webhook status
+    is_active: Mapped[bool] = mapped_column(
+        Boolean,
+        default=True,
+        nullable=False
+    )
+    retry_count: Mapped[int] = mapped_column(
+        Integer,
+        default=3,
+        nullable=False
+    )
+    timeout_seconds: Mapped[int] = mapped_column(
+        Integer,
+        default=30,
+        nullable=False
+    )
+
+    # Statistics
+    last_triggered_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True
+    )
+    trigger_count: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        nullable=False
+    )
+    failure_count: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        nullable=False
+    )
+
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False
+    )
+    created_by: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id"),
+        nullable=False
+    )
+
+    # Relationships
+    project: Mapped["Project"] = relationship(
+        "Project",
+        back_populates="webhooks"
+    )
+    creator: Mapped["User"] = relationship()

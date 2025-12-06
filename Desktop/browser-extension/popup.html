@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UITrace Recorder</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <header class="header">
+      <h1 class="title">UITrace Recorder</h1>
+      <div class="status-indicator" id="statusIndicator">
+        <span class="status-dot" id="statusDot"></span>
+        <span class="status-text" id="statusText">Ready</span>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="recording-controls">
+        <button class="btn btn-primary" id="startBtn">
+          <span class="icon">⏺️</span>
+          Start Recording
+        </button>
+        <button class="btn btn-danger" id="stopBtn" disabled>
+          <span class="icon">⏹️</span>
+          Stop Recording
+        </button>
+      </div>
+
+      <div class="recording-info" id="recordingInfo" style="display: none;">
+        <div class="info-item">
+          <span class="label">Events:</span>
+          <span class="value" id="eventCount">0</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Duration:</span>
+          <span class="value" id="duration">00:00</span>
+        </div>
+      </div>
+
+      <div class="recent-recordings">
+        <h2 class="section-title">Recent Recordings</h2>
+        <div class="recordings-list" id="recordingsList">
+          <p class="no-recordings">No recordings yet</p>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <button class="btn btn-secondary btn-small" id="viewAllBtn">View All</button>
+      <button class="btn btn-secondary btn-small" id="optionsBtn">Options</button>
+      <button class="btn btn-secondary btn-small" id="exportBtn" disabled>Export</button>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

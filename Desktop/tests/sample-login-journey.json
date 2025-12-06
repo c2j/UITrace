@@ -1,0 +1,288 @@
+{
+  "id": "test-recording-001",
+  "name": "Login Journey Test",
+  "description": "A simple login, search, and logout journey recorded from a web application",
+  "version": "1.0.0",
+  "created_at": "2025-12-06T00:00:00Z",
+  "updated_at": "2025-12-06T00:00:00Z",
+  "created_by": "uitrace-test@example.com",
+  "tags": ["login", "search", "smoke-test"],
+  "steps": [
+    {
+      "id": "step-001",
+      "sequence": 1,
+      "description": "Navigate to login page",
+      "action": "navigate",
+      "value": "https://example.com/login",
+      "timeout_seconds": 30,
+      "retry_count": 3,
+      "selectors": [],
+      "metadata": {
+        "page_title": "Login - Example",
+        "url": "https://example.com/login"
+      }
+    },
+    {
+      "id": "step-002",
+      "sequence": 2,
+      "description": "Enter username",
+      "action": "type",
+      "value": "testuser@example.com",
+      "timeout_seconds": 10,
+      "retry_count": 2,
+      "selectors": [
+        {
+          "type": "id",
+          "value": "username-input",
+          "priority": 1
+        },
+        {
+          "type": "css",
+          "value": "input[type='email'][name='username']",
+          "priority": 2
+        },
+        {
+          "type": "xpath",
+          "value": "//input[@type='email']",
+          "priority": 3
+        },
+        {
+          "type": "css",
+          "value": ".username-field",
+          "priority": 4
+        },
+        {
+          "type": "tag",
+          "value": "input",
+          "priority": 5
+        }
+      ],
+      "metadata": {
+        "element_tag": "input",
+        "input_type": "email",
+        "placeholder": "Enter your email"
+      }
+    },
+    {
+      "id": "step-003",
+      "sequence": 3,
+      "description": "Enter password",
+      "action": "type",
+      "value": "password123",
+      "timeout_seconds": 10,
+      "retry_count": 2,
+      "selectors": [
+        {
+          "type": "id",
+          "value": "password-input",
+          "priority": 1
+        },
+        {
+          "type": "css",
+          "value": "input[type='password'][name='password']",
+          "priority": 2
+        },
+        {
+          "type": "xpath",
+          "value": "//input[@type='password']",
+          "priority": 3
+        }
+      ],
+      "metadata": {
+        "element_tag": "input",
+        "input_type": "password",
+        "placeholder": "Enter your password"
+      }
+    },
+    {
+      "id": "step-004",
+      "sequence": 4,
+      "description": "Click login button",
+      "action": "click",
+      "value": null,
+      "timeout_seconds": 15,
+      "retry_count": 3,
+      "selectors": [
+        {
+          "type": "id",
+          "value": "login-button",
+          "priority": 1
+        },
+        {
+          "type": "css",
+          "value": "button[type='submit']",
+          "priority": 2
+        },
+        {
+          "type": "css",
+          "value": ".btn-primary",
+          "priority": 3
+        },
+        {
+          "type": "xpath",
+          "value": "//button[text()='Login']",
+          "priority": 4
+        },
+        {
+          "type": "tag",
+          "value": "button",
+          "priority": 5
+        }
+      ],
+      "metadata": {
+        "element_tag": "button",
+        "element_text": "Login",
+        "coordinates": [500, 300]
+      }
+    },
+    {
+      "id": "step-005",
+      "sequence": 5,
+      "description": "Wait for dashboard to load",
+      "action": "wait",
+      "value": "2000",
+      "timeout_seconds": 5,
+      "retry_count": 1,
+      "selectors": [],
+      "metadata": {
+        "wait_type": "fixed",
+        "duration_ms": 2000
+      }
+    },
+    {
+      "id": "step-006",
+      "sequence": 6,
+      "description": "Enter search query",
+      "action": "type",
+      "value": "UITrace platform",
+      "timeout_seconds": 10,
+      "retry_count": 2,
+      "selectors": [
+        {
+          "type": "id",
+          "value": "search-input",
+          "priority": 1
+        },
+        {
+          "type": "css",
+          "value": "input[placeholder*='Search']",
+          "priority": 2
+        },
+        {
+          "type": "css",
+          "value": ".search-field",
+          "priority": 3
+        },
+        {
+          "type": "xpath",
+          "value": "//input[contains(@placeholder, 'Search')]",
+          "priority": 4
+        }
+      ],
+      "metadata": {
+        "element_tag": "input",
+        "placeholder": "Search for products..."
+      }
+    },
+    {
+      "id": "step-007",
+      "sequence": 7,
+      "description": "Click search button",
+      "action": "click",
+      "value": null,
+      "timeout_seconds": 10,
+      "retry_count": 2,
+      "selectors": [
+        {
+          "type": "css",
+          "value": "button[aria-label*='Search']",
+          "priority": 1
+        },
+        {
+          "type": "css",
+          "value": ".search-button",
+          "priority": 2
+        },
+        {
+          "type": "xpath",
+          "value": "//button[contains(@class, 'search')]",
+          "priority": 3
+        },
+        {
+          "type": "tag",
+          "value": "button",
+          "priority": 4
+        }
+      ],
+      "metadata": {
+        "element_tag": "button",
+        "element_text": "Search"
+      }
+    },
+    {
+      "id": "step-008",
+      "sequence": 8,
+      "description": "Wait for search results",
+      "action": "wait",
+      "value": "3000",
+      "timeout_seconds": 5,
+      "retry_count": 1,
+      "selectors": [],
+      "metadata": {
+        "wait_type": "fixed",
+        "duration_ms": 3000
+      }
+    },
+    {
+      "id": "step-009",
+      "sequence": 9,
+      "description": "Click logout link",
+      "action": "click",
+      "value": null,
+      "timeout_seconds": 10,
+      "retry_count": 2,
+      "selectors": [
+        {
+          "type": "link_text",
+          "value": "Logout",
+          "priority": 1
+        },
+        {
+          "type": "partial_link_text",
+          "value": "Logout",
+          "priority": 2
+        },
+        {
+          "type": "css",
+          "value": ".logout-link",
+          "priority": 3
+        },
+        {
+          "type": "xpath",
+          "value": "//a[text()='Logout']",
+          "priority": 4
+        },
+        {
+          "type": "tag",
+          "value": "a",
+          "priority": 5
+        }
+      ],
+      "metadata": {
+        "element_tag": "a",
+        "element_text": "Logout"
+      }
+    }
+  ],
+  "metadata": {
+    "recording_mode": "browser_extension",
+    "browser": "Chrome",
+    "browser_version": "120.0.6099.71",
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "recording_duration_ms": 45000,
+    "total_steps": 9
+  }
+}
