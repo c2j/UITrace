@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use crate::models::TestStep;
+use crate::models::test_step::TestStep;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TestScript {
@@ -77,7 +77,7 @@ impl TestScript {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::models::TestStep;
+    use crate::models::test_step::TestStep;
 
     #[test]
     fn test_script_creation() {

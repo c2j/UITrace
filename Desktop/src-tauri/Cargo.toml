@@ -37,3 +37,12 @@ features = [
 [dependencies.serde]
 version = "1"
 features = [ "derive" ]
+
+# Add the uitrust library as a dependency
+uitrace_desktop = { path = "../src" }
+
+# Additional dependencies for uitrust functionality
+uuid = { version = "1.0", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+tokio = { version = "1.0", features = ["full"] }
+thiserror = "1.0"

@@ -8,6 +8,34 @@ pub struct TestData {
     pub description: Option<String>,
     pub rows: Vec<TestDataRow>,
     pub variables: HashMap<String, String>,
+    // Add missing fields
+    pub headers: Vec<String>,
+    pub row_count: usize,
+}
+
+impl TestData {
+    pub fn new(name: String) -> Self {
+        Self {
+            name,
+            description: None,
+            rows: Vec::new(),
+            variables: HashMap::new(),
+            headers: Vec::new(),
+            row_count: 0,
+        }
+    }
+
+    pub fn with_headers(mut self, headers: Vec<String>) -> Self {
+        self.headers = headers.clone();
+        self.row_count = self.rows.len();
+        self
+    }
+
+    pub fn add_row(mut self, row: TestDataRow) -> Self {
+        self.rows.push(row);
+        self.row_count = self.rows.len();
+        self
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

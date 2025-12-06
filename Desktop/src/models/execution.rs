@@ -37,6 +37,9 @@ pub struct StepResult {
     pub error: Option<String>,
     pub screenshot: Option<PathBuf>,
     pub retry_count: u32,
+    // Add missing fields
+    pub selector_used: Option<String>,
+    pub execution_time_ms: Option<u64>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

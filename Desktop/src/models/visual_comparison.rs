@@ -41,6 +41,45 @@ pub struct BaselineImage {
     pub tags: Vec<String>,
 }
 
+// Add VisualBaseline struct
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VisualBaseline {
+    pub id: String,
+    pub script_id: String,
+    pub step_id: String,
+    pub browser_type: Option<String>,
+    pub viewport_width: Option<u32>,
+    pub viewport_height: Option<u32>,
+    pub baseline_path: String,
+    pub similarity_threshold: f32,
+    pub is_active: bool,
+    pub created_by: String,
+    pub created_at: String,
+}
+
+impl VisualBaseline {
+    pub fn new(
+        script_id: String,
+        step_id: String,
+        baseline_path: String,
+        created_by: String,
+    ) -> Self {
+        Self {
+            id: uuid::Uuid::new_v4().to_string(),
+            script_id,
+            step_id,
+            browser_type: None,
+            viewport_width: None,
+            viewport_height: None,
+            baseline_path,
+            similarity_threshold: 0.95,
+            is_active: true,
+            created_by,
+            created_at: chrono::Utc::now().to_rfc3339(),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ComparisonConfig {
     pub threshold: f32,

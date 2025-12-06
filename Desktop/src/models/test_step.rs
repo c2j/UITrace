@@ -14,6 +14,8 @@ pub struct TestStep {
     pub timeout_seconds: u32,
     pub selectors: Vec<Selector>,
     pub metadata: HashMap<String, String>,
+    // Add sequence field for executor compatibility
+    pub sequence: Option<u32>,
 }
 
 impl TestStep {
@@ -29,6 +31,7 @@ impl TestStep {
             timeout_seconds: 30,
             selectors: Vec::new(),
             metadata: HashMap::new(),
+            sequence: None,
         }
     }
 

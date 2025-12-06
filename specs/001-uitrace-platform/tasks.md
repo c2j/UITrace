@@ -81,10 +81,10 @@ description: "Comprehensive task list for UITrace Platform implementation"
 
 ### Tests for User Story 1 (Constitution II requires TDD)
 
-- [ ] T014-T [US1] Write unit tests for DOM event capture in desktop/tests/unit/recorder/event_capture_test.rs
-- [ ] T015-T [P] [US1] Write unit tests for selector generation in desktop/tests/unit/recorder/selector_test.rs
-- [ ] T016-T [P] [US1] Write integration tests for script recording flow in desktop/tests/integration/recording_test.rs
-- [ ] T017-T [US1] Write E2E test for record-edit-save workflow in desktop/tests/e2e/script_recording_test.rs
+- [X] T014-T [US1] Write unit tests for DOM event capture in desktop/tests/unit/recorder/event_capture_test.rs
+- [X] T015-T [P] [US1] Write unit tests for selector generation in desktop/tests/unit/recorder/selector_test.rs
+- [X] T016-T [P] [US1] Write integration tests for script recording flow in desktop/tests/integration/recording_test.rs
+- [X] T017-T [US1] Write E2E test for record-edit-save workflow in desktop/tests/e2e/script_recording_test.rs
 
 ### Implementation for User Story 1
 

@@ -2,7 +2,8 @@
 
 use tauri::{
 	menu::{Menu, MenuItem},
-	tray::TrayIconBuilder
+	tray::TrayIconBuilder,
+	Manager
 };
 
 pub fn run() {
@@ -25,6 +26,9 @@ pub fn run() {
 				})
 				.build(app)?;
 
+			// Initialize UITrust application state
+			uitrace_desktop_lib::init_app_state(app.handle())?;
+
 			Ok(())
 		})
 		.plugin(tauri_plugin_shell::init())
@@ -32,6 +36,23 @@ pub fn run() {
 		.plugin(tauri_plugin_os::init())
 		.plugin(tauri_plugin_fs::init())
 		.plugin(tauri_plugin_store::Builder::new().build())
+		.plugin(tauri_plugin_http::init())
+		.invoke_handler(tauri::generate_handler![
+			uitrace_desktop_lib::commands::recorder::start_recording,
+			uitrace_desktop_lib::commands::recorder::stop_recording,
+			uitrace_desktop_lib::commands::recorder::save_recording,
+			uitrace_desktop_lib::commands::recorder::load_recording,
+			uitrace_desktop_lib::commands::recorder::capture_dom_event,
+			uitrace_desktop_lib::commands::executor::execute_script,
+			uitrace_desktop_lib::commands::executor::stop_execution,
+			uitrace_desktop_lib::commands::executor::get_execution_status,
+			uitrace_desktop_lib::commands::visual::take_screenshot,
+			uitrace_desktop_lib::commands::visual::compare_images,
+			uitrace_desktop_lib::commands::visual::create_baseline,
+			uitrace_desktop_lib::commands::data::load_test_data,
+			uitrace_desktop_lib::commands::data::validate_test_data,
+			uitrace_desktop_lib::commands::data::substitute_variables,
+		])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
