@@ -2,8 +2,17 @@
 
 **Feature Branch**: `001-uitrace-platform`
 **Created**: 2025-11-27
+**Updated**: 2025-12-06
 **Status**: Draft
 **Input**: User description: "需求来自docs/developer/requirement.md, docs/developer/UI.md；设计来自 docs/developer/design.md"
+
+## Clarifications
+
+### Session 2025-12-06
+
+- Q: How should the system record user interactions? → A: Browser extension with WebDriver fallback (Option B) - Extension provides primary DOM event capture with WebDriver as backup for compatibility
+- Q: Where should scripts and test data be stored? → A: Local-first with server sync (Option C) - Desktop stores data locally for offline work, syncs to server when online for collaboration
+- Q: Which algorithm should detect visual UI differences? → A: SSIM algorithm (Option B) - Structural Similarity Index for perceptual image comparison with 1% threshold and <5% false positive rate
 
 ## User Scenarios & Testing *(mandatory)*
 
