@@ -1,4 +1,5 @@
-use crate::executor::{ScriptExecutor, ExecutionConfig};
+// Temporarily disable executor commands until User Story 2 implementation
+// use crate::executor::{ScriptExecutor, ExecutionConfig};
 use crate::models::ExecutionResult;
 use crate::models::{TestScript, TestData};
 use serde_json::Value;
@@ -7,31 +8,23 @@ use tauri::{command, AppHandle, Manager};
 
 #[command]
 pub async fn execute_script(
-    app: AppHandle,
-    script_path: PathBuf,
-    test_data: Option<TestData>,
-    config: Option<ExecutionConfig>,
+    _app: AppHandle,
+    _script_path: PathBuf,
+    _test_data: Option<TestData>,
+    _config: Option<serde_json::Value>,
 ) -> Result<String, String> {
-    let executor = ScriptExecutor::new(config.unwrap_or_default());
-    let execution_id = executor.execute_script(&script_path, test_data).await
-        .map_err(|e| format!("Failed to execute script: {}", e))?;
-
-    // Store executor in app state for potential stop operation
-    app.manage(executor);
-
-    Ok(execution_id)
+    // TODO: Implement script execution in User Story 2
+    Err("Script execution not yet implemented - coming in User Story 2".to_string())
 }
 
 #[command]
-pub async fn stop_execution(app: AppHandle) -> Result<ExecutionResult, String> {
-    let executor = app.state::<ScriptExecutor>();
-    executor.stop_execution().await
-        .map_err(|e| format!("Failed to stop execution: {}", e))
+pub async fn stop_execution(_app: AppHandle) -> Result<ExecutionResult, String> {
+    // TODO: Implement stop execution in User Story 2
+    Err("Stop execution not yet implemented - coming in User Story 2".to_string())
 }
 
 #[command]
-pub async fn get_execution_status(app: AppHandle, execution_id: String) -> Result<Value, String> {
-    let executor = app.state::<ScriptExecutor>();
-    executor.get_execution_status(&execution_id).await
-        .map_err(|e| format!("Failed to get execution status: {}", e))
+pub async fn get_execution_status(_app: AppHandle, _execution_id: String) -> Result<Value, String> {
+    // TODO: Implement get execution status in User Story 2
+    Err("Get execution status not yet implemented - coming in User Story 2".to_string())
 }

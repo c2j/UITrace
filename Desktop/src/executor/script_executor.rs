@@ -61,6 +61,8 @@ impl ScriptExecutor {
                             error: None,
                             screenshot: None,
                             retry_count: 0,
+                            selector_used: None,
+                            execution_time_ms: None,
                         };
 
                         // Execute step with retries

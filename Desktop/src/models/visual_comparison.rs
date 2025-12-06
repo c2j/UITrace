@@ -55,6 +55,10 @@ pub struct VisualBaseline {
     pub is_active: bool,
     pub created_by: String,
     pub created_at: String,
+    // Add missing fields for baseline_management.rs compatibility
+    pub path: Option<String>,
+    pub hash: Option<String>,
+    pub threshold: Option<f32>,
 }
 
 impl VisualBaseline {
@@ -71,11 +75,14 @@ impl VisualBaseline {
             browser_type: None,
             viewport_width: None,
             viewport_height: None,
-            baseline_path,
+            baseline_path: baseline_path.clone(),
             similarity_threshold: 0.95,
             is_active: true,
             created_by,
             created_at: chrono::Utc::now().to_rfc3339(),
+            path: Some(baseline_path),
+            hash: None,
+            threshold: Some(0.95),
         }
     }
 }

@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use regex::Regex;
 use thiserror::Error;
 use log::{debug, warn};
+use rand;
 
 #[derive(Error, Debug)]
 pub enum SubstitutionError {
@@ -234,7 +235,7 @@ impl VariableSubstitutor {
 
         // Add random values
         variables.insert("RANDOM_INT".to_string(),
-            fastrand::u64(1000..9999).to_string());
+            rand::random::<u32>() % 9000 + 1000); // 1000-9999
 
         variables.insert("UUID".to_string(),
             uuid::Uuid::new_v4().to_string());
