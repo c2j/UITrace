@@ -1,0 +1,50 @@
+{
+  "test_urls": [
+    "https://httpbin.org/html",
+    "https://httpbin.org/forms/post",
+    "https://httpbin.org/delay/1",
+    "https://example.com",
+    "https://www.google.com"
+  ],
+  "test_selectors": [
+    {
+      "type": "css",
+      "selector": "h1",
+      "description": "Heading element"
+    },
+    {
+      "type": "css",
+      "selector": "input[type='text']",
+      "description": "Text input"
+    },
+    {
+      "type": "css",
+      "selector": "button",
+      "description": "Button element"
+    },
+    {
+      "type": "id",
+      "selector": "search-input",
+      "description": "Search input field"
+    },
+    {
+      "type": "class",
+      "selector": "btn-primary",
+      "description": "Primary button"
+    }
+  ],
+  "test_texts": [
+    "Hello World",
+    "Test Automation",
+    "UITrace Platform",
+    "End-to-End Testing",
+    "Selenium WebDriver"
+  ],
+  "test_delays": [
+    1,
+    2,
+    3,
+    5,
+    10
+  ]
+}

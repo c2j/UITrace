@@ -1,0 +1,67 @@
+{
+  "data_type": "users",
+  "count": 5,
+  "generated_at": "2025-12-07T11:52:23.904332",
+  "data": [
+    {
+      "username": "sarahsmith229",
+      "email": "sarah.smith@test.com",
+      "first_name": "Sarah",
+      "last_name": "Smith",
+      "age": 23,
+      "country": "India",
+      "city": "S\u00e3o Paulo",
+      "phone": "+76 553035110",
+      "address": "521 Main Street, S\u00e3o Paulo, 22280, India",
+      "registration_date": "2025-03-02T09:43:36.904255"
+    },
+    {
+      "username": "lisasmith734",
+      "email": "smithl@yahoo.com",
+      "first_name": "Lisa",
+      "last_name": "Smith",
+      "age": 46,
+      "country": "Argentina",
+      "city": "Tokyo",
+      "phone": "+76 398704996",
+      "address": "107 Elm Drive, Tokyo, 65392, Argentina",
+      "registration_date": "2025-04-18T15:14:15.904287"
+    },
+    {
+      "username": "jamesjones105",
+      "email": "jonesj@gmail.com",
+      "first_name": "James",
+      "last_name": "Jones",
+      "age": 40,
+      "country": "Japan",
+      "city": "Mexico City",
+      "phone": "+45 748245888",
+      "address": "4334 Main Street, Mexico City, 70217, Japan",
+      "registration_date": "2025-07-03T17:52:52.904302"
+    },
+    {
+      "username": "sarahgonzalez301",
+      "email": "sarah850@test.com",
+      "first_name": "Sarah",
+      "last_name": "Gonzalez",
+      "age": 30,
+      "country": "Canada",
+      "city": "Buenos Aires",
+      "phone": "+1 (921) 271-1750",
+      "address": "3734 First Street, Buenos Aires, 20458, Canada",
+      "registration_date": "2025-11-04T16:00:43.904315"
+    },
+    {
+      "username": "lisabrown465",
+      "email": "lisa651@yahoo.com",
+      "first_name": "Lisa",
+      "last_name": "Brown",
+      "age": 41,
+      "country": "Spain",
+      "city": "Mumbai",
+      "phone": "+46 324956459",
+      "address": "4375 Oak Avenue, Mumbai, 89840, Spain",
+      "registration_date": "2025-08-11T02:17:58.904327"
+    }
+  ]
+}

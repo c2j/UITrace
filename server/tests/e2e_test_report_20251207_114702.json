@@ -1,0 +1,346 @@
+{
+  "summary": {
+    "total_tests": 6,
+    "passed_tests": 4,
+    "failed_tests": 2,
+    "success_rate": 66.66666666666666,
+    "total_duration": 52.66873550415039,
+    "timestamp": "2025-12-07T11:47:02.508619"
+  },
+  "individual_tests": [
+    {
+      "name": "Network Resilience",
+      "success": true,
+      "duration": 6.343680143356323,
+      "timestamp": "2025-12-07T11:46:15.828827"
+    },
+    {
+      "name": "Script Service",
+      "success": false,
+      "duration": 0.265366792678833,
+      "timestamp": "2025-12-07T11:46:16.094204"
+    },
+    {
+      "name": "Browser Automation",
+      "success": true,
+      "duration": 46.05937480926514,
+      "timestamp": "2025-12-07T11:47:02.153597"
+    },
+    {
+      "name": "Smart Selectors",
+      "success": true,
+      "duration": 6.4373016357421875e-06,
+      "timestamp": "2025-12-07T11:47:02.153615"
+    },
+    {
+      "name": "Data Generation",
+      "success": true,
+      "duration": 0.00030732154846191406,
+      "timestamp": "2025-12-07T11:47:02.153928"
+    }
+  ],
+  "pytest_suite": {
+    "success": false,
+    "output": "",
+    "errors": "Traceback (most recent call last):\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/coverage/config.py\", line 330, in from_file\n    was_set = self._set_attr_from_config_option(cp, *option_spec)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/coverage/config.py\", line 486, in _set_attr_from_config_option\n    setattr(self, attr, method(section, option))\n                        ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/coverage/tomlconfig.py\", line 181, in getboolean\n    return self._check_type(name, option, value, bool, bool_strings.__getitem__, \"a boolean\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/coverage/tomlconfig.py\", line 174, in _check_type\n    raise ValueError(\nValueError: Option [tool.coverage.run]branch is not a boolean: ['main']\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/pytest/__main__.py\", line 9, in <module>\n    raise SystemExit(pytest.console_main())\n                     ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/_pytest/config/__init__.py\", line 223, in console_main\n    code = main()\n           ^^^^^^\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/_pytest/config/__init__.py\", line 193, in main\n    config = _prepareconfig(new_args, plugins)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/_pytest/config/__init__.py\", line 361, in _prepareconfig\n    config: Config = pluginmanager.hook.pytest_cmdline_parse(\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/pluggy/_hooks.py\", line 512, in __call__\n    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/pluggy/_manager.py\", line 120, in _hookexec\n    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/pluggy/_callers.py\", line 167, in _multicall\n    raise exception\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/pluggy/_callers.py\", line 139, in _multicall\n    teardown.throw(exception)\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/_pytest/helpconfig.py\", line 124, in pytest_cmdline_parse\n    config = yield\n             ^^^^^\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/pluggy/_callers.py\", line 121, in _multicall\n    res = hook_impl.function(*args)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/_pytest/config/__init__.py\", line 1186, in pytest_cmdline_parse\n    self.parse(args)\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/_pytest/config/__init__.py\", line 1556, in parse\n    self.hook.pytest_load_initial_conftests(\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/pluggy/_hooks.py\", line 512, in __call__\n    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/pluggy/_manager.py\", line 120, in _hookexec\n    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/pluggy/_callers.py\", line 167, in _multicall\n    raise exception\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/pluggy/_callers.py\", line 139, in _multicall\n    teardown.throw(exception)\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/_pytest/warnings.py\", line 128, in pytest_load_initial_conftests\n    return (yield)\n            ^^^^^\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/pluggy/_callers.py\", line 139, in _multicall\n    teardown.throw(exception)\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/_pytest/capture.py\", line 173, in pytest_load_initial_conftests\n    yield\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/pluggy/_callers.py\", line 121, in _multicall\n    res = hook_impl.function(*args)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/pytest_cov/plugin.py\", line 200, in pytest_load_initial_conftests\n    plugin = CovPlugin(options, early_config.pluginmanager)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/pytest_cov/plugin.py\", line 250, in __init__\n    self.start(engine.Central)\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/pytest_cov/plugin.py\", line 263, in start\n    self.cov_controller.start()\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/pytest_cov/engine.py\", line 55, in ensure_topdir_wrapper\n    return meth(self, *args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/pytest_cov/engine.py\", line 260, in start\n    self.cov = coverage.Coverage(\n               ^^^^^^^^^^^^^^^^^^\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/coverage/control.py\", line 329, in __init__\n    self.config = read_coverage_config(\n                  ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/coverage/config.py\", line 697, in read_coverage_config\n    config_read = config.from_file(fname, warn, our_file=our_file)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/coverage/config.py\", line 334, in from_file\n    raise ConfigError(f\"Couldn't read config file {filename}: {err}\") from err\ncoverage.exceptions.ConfigError: Couldn't read config file pyproject.toml: Option [tool.coverage.run]branch is not a boolean: ['main']\n",
+    "duration": null
+  },
+  "test_data": {
+    "users": {
+      "data_type": "users",
+      "count": 5,
+      "generated_at": "2025-12-07T11:46:09.484632",
+      "data": [
+        {
+          "username": "sarahsmith229",
+          "email": "sarah.smith@test.com",
+          "first_name": "Sarah",
+          "last_name": "Smith",
+          "age": 23,
+          "country": "India",
+          "city": "S\u00e3o Paulo",
+          "phone": "+76 553035110",
+          "address": "521 Main Street, S\u00e3o Paulo, 22280, India",
+          "registration_date": "2025-03-02T09:37:22.484557"
+        },
+        {
+          "username": "lisasmith734",
+          "email": "smithl@yahoo.com",
+          "first_name": "Lisa",
+          "last_name": "Smith",
+          "age": 46,
+          "country": "Argentina",
+          "city": "Tokyo",
+          "phone": "+76 398704996",
+          "address": "107 Elm Drive, Tokyo, 65392, Argentina",
+          "registration_date": "2025-04-18T15:08:01.484585"
+        },
+        {
+          "username": "jamesjones105",
+          "email": "jonesj@gmail.com",
+          "first_name": "James",
+          "last_name": "Jones",
+          "age": 40,
+          "country": "Japan",
+          "city": "Mexico City",
+          "phone": "+45 748245888",
+          "address": "4334 Main Street, Mexico City, 70217, Japan",
+          "registration_date": "2025-07-03T17:46:38.484600"
+        },
+        {
+          "username": "sarahgonzalez301",
+          "email": "sarah850@test.com",
+          "first_name": "Sarah",
+          "last_name": "Gonzalez",
+          "age": 30,
+          "country": "Canada",
+          "city": "Buenos Aires",
+          "phone": "+1 (921) 271-1750",
+          "address": "3734 First Street, Buenos Aires, 20458, Canada",
+          "registration_date": "2025-11-04T15:54:29.484612"
+        },
+        {
+          "username": "lisabrown465",
+          "email": "lisa651@yahoo.com",
+          "first_name": "Lisa",
+          "last_name": "Brown",
+          "age": 41,
+          "country": "Spain",
+          "city": "Mumbai",
+          "phone": "+46 324956459",
+          "address": "4375 Oak Avenue, Mumbai, 89840, Spain",
+          "registration_date": "2025-08-11T02:11:44.484623"
+        }
+      ]
+    },
+    "products": {
+      "data_type": "products",
+      "count": 10,
+      "generated_at": "2025-12-07T11:46:09.484691",
+      "data": [
+        {
+          "name": "Eco-Friendly Scanner",
+          "description": "High-quality scanner with advanced features and modern design",
+          "price": 335.17,
+          "category": "Books",
+          "sku": "SKU59735",
+          "stock_quantity": 276,
+          "rating": 5.0,
+          "manufacturer": "Innovation Labs"
+        },
+        {
+          "name": "Stylish Keyboard",
+          "description": "High-quality keyboard with advanced features and modern design",
+          "price": 1372.38,
+          "category": "Health",
+          "sku": "SKU17331",
+          "stock_quantity": 234,
+          "rating": 4.6,
+          "manufacturer": "Innovation Labs"
+        },
+        {
+          "name": "Wireless Watch",
+          "description": "High-quality watch with advanced features and modern design",
+          "price": 429.86,
+          "category": "Automotive",
+          "sku": "SKU84341",
+          "stock_quantity": 897,
+          "rating": 4.4,
+          "manufacturer": "Global Industries"
+        },
+        {
+          "name": "Durable Monitor",
+          "description": "High-quality monitor with advanced features and modern design",
+          "price": 1770.52,
+          "category": "Home & Garden",
+          "sku": "SKU94259",
+          "stock_quantity": 469,
+          "rating": 3.3,
+          "manufacturer": "Superior Brands"
+        },
+        {
+          "name": "Advanced Scanner",
+          "description": "High-quality scanner with advanced features and modern design",
+          "price": 1496.56,
+          "category": "Books",
+          "sku": "SKU66155",
+          "stock_quantity": 919,
+          "rating": 4.2,
+          "manufacturer": "Elite Manufacturing"
+        },
+        {
+          "name": "Advanced Headphones",
+          "description": "High-quality headphones with advanced features and modern design",
+          "price": 190.91,
+          "category": "Automotive",
+          "sku": "SKU16175",
+          "stock_quantity": 881,
+          "rating": 3.2,
+          "manufacturer": "Prime Components"
+        },
+        {
+          "name": "Deluxe Printer",
+          "description": "High-quality printer with advanced features and modern design",
+          "price": 1196.85,
+          "category": "Health",
+          "sku": "SKU60432",
+          "stock_quantity": 390,
+          "rating": 4.2,
+          "manufacturer": "Superior Brands"
+        },
+        {
+          "name": "Eco-Friendly Watch",
+          "description": "High-quality watch with advanced features and modern design",
+          "price": 1363.76,
+          "category": "Beauty",
+          "sku": "SKU25014",
+          "stock_quantity": 698,
+          "rating": 4.8,
+          "manufacturer": "TechCorp"
+        },
+        {
+          "name": "Durable Tablet",
+          "description": "High-quality tablet with advanced features and modern design",
+          "price": 594.07,
+          "category": "Sports",
+          "sku": "SKU30730",
+          "stock_quantity": 464,
+          "rating": 3.0,
+          "manufacturer": "Global Industries"
+        },
+        {
+          "name": "Stylish Watch",
+          "description": "High-quality watch with advanced features and modern design",
+          "price": 1020.29,
+          "category": "Office",
+          "sku": "SKU23947",
+          "stock_quantity": 891,
+          "rating": 4.3,
+          "manufacturer": "Quality Products Inc"
+        }
+      ]
+    },
+    "script_test_data": {
+      "test_urls": [
+        "https://httpbin.org/html",
+        "https://httpbin.org/forms/post",
+        "https://httpbin.org/delay/1",
+        "https://example.com",
+        "https://www.google.com"
+      ],
+      "test_selectors": [
+        {
+          "type": "css",
+          "selector": "h1",
+          "description": "Heading element"
+        },
+        {
+          "type": "css",
+          "selector": "input[type='text']",
+          "description": "Text input"
+        },
+        {
+          "type": "css",
+          "selector": "button",
+          "description": "Button element"
+        },
+        {
+          "type": "id",
+          "selector": "search-input",
+          "description": "Search input field"
+        },
+        {
+          "type": "class",
+          "selector": "btn-primary",
+          "description": "Primary button"
+        }
+      ],
+      "test_texts": [
+        "Hello World",
+        "Test Automation",
+        "UITrace Platform",
+        "End-to-End Testing",
+        "Selenium WebDriver"
+      ],
+      "test_delays": [
+        1,
+        2,
+        3,
+        5,
+        10
+      ]
+    },
+    "browser_scenarios": [
+      {
+        "name": "Simple Navigation Test",
+        "steps": [
+          {
+            "action": "navigate",
+            "url": "https://httpbin.org/html"
+          },
+          {
+            "action": "wait",
+            "duration": 2
+          },
+          {
+            "action": "screenshot"
+          }
+        ]
+      },
+      {
+        "name": "Form Interaction Test",
+        "steps": [
+          {
+            "action": "navigate",
+            "url": "https://httpbin.org/forms/post"
+          },
+          {
+            "action": "input",
+            "selector": "input[name='custname']",
+            "text": "John Doe"
+          },
+          {
+            "action": "input",
+            "selector": "input[name='custtel']",
+            "text": "123-456-7890"
+          },
+          {
+            "action": "click",
+            "selector": "button[type='submit']"
+          },
+          {
+            "action": "wait",
+            "duration": 3
+          }
+        ]
+      },
+      {
+        "name": "Element Finding Test",
+        "steps": [
+          {
+            "action": "navigate",
+            "url": "https://example.com"
+          },
+          {
+            "action": "find",
+            "selector": "h1",
+            "selector_type": "tag"
+          },
+          {
+            "action": "find",
+            "selector": "p",
+            "selector_type": "tag"
+          },
+          {
+            "action": "screenshot"
+          }
+        ]
+      }
+    ]
+  },
+  "recommendations": [
+    "\ud83d\udd27 Fix 1 failed component tests",
+    "\ud83d\udd27 Review pytest E2E test failures",
+    "\u26a1 Optimize 1 slow tests"
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "data_type": "products",
+  "count": 10,
+  "generated_at": "2025-12-07T11:52:23.904396",
+  "data": [
+    {
+      "name": "Eco-Friendly Scanner",
+      "description": "High-quality scanner with advanced features and modern design",
+      "price": 335.17,
+      "category": "Books",
+      "sku": "SKU59735",
+      "stock_quantity": 276,
+      "rating": 5.0,
+      "manufacturer": "Innovation Labs"
+    },
+    {
+      "name": "Stylish Keyboard",
+      "description": "High-quality keyboard with advanced features and modern design",
+      "price": 1372.38,
+      "category": "Health",
+      "sku": "SKU17331",
+      "stock_quantity": 234,
+      "rating": 4.6,
+      "manufacturer": "Innovation Labs"
+    },
+    {
+      "name": "Wireless Watch",
+      "description": "High-quality watch with advanced features and modern design",
+      "price": 429.86,
+      "category": "Automotive",
+      "sku": "SKU84341",
+      "stock_quantity": 897,
+      "rating": 4.4,
+      "manufacturer": "Global Industries"
+    },
+    {
+      "name": "Durable Monitor",
+      "description": "High-quality monitor with advanced features and modern design",
+      "price": 1770.52,
+      "category": "Home & Garden",
+      "sku": "SKU94259",
+      "stock_quantity": 469,
+      "rating": 3.3,
+      "manufacturer": "Superior Brands"
+    },
+    {
+      "name": "Advanced Scanner",
+      "description": "High-quality scanner with advanced features and modern design",
+      "price": 1496.56,
+      "category": "Books",
+      "sku": "SKU66155",
+      "stock_quantity": 919,
+      "rating": 4.2,
+      "manufacturer": "Elite Manufacturing"
+    },
+    {
+      "name": "Advanced Headphones",
+      "description": "High-quality headphones with advanced features and modern design",
+      "price": 190.91,
+      "category": "Automotive",
+      "sku": "SKU16175",
+      "stock_quantity": 881,
+      "rating": 3.2,
+      "manufacturer": "Prime Components"
+    },
+    {
+      "name": "Deluxe Printer",
+      "description": "High-quality printer with advanced features and modern design",
+      "price": 1196.85,
+      "category": "Health",
+      "sku": "SKU60432",
+      "stock_quantity": 390,
+      "rating": 4.2,
+      "manufacturer": "Superior Brands"
+    },
+    {
+      "name": "Eco-Friendly Watch",
+      "description": "High-quality watch with advanced features and modern design",
+      "price": 1363.76,
+      "category": "Beauty",
+      "sku": "SKU25014",
+      "stock_quantity": 698,
+      "rating": 4.8,
+      "manufacturer": "TechCorp"
+    },
+    {
+      "name": "Durable Tablet",
+      "description": "High-quality tablet with advanced features and modern design",
+      "price": 594.07,
+      "category": "Sports",
+      "sku": "SKU30730",
+      "stock_quantity": 464,
+      "rating": 3.0,
+      "manufacturer": "Global Industries"
+    },
+    {
+      "name": "Stylish Watch",
+      "description": "High-quality watch with advanced features and modern design",
+      "price": 1020.29,
+      "category": "Office",
+      "sku": "SKU23947",
+      "stock_quantity": 891,
+      "rating": 4.3,
+      "manufacturer": "Quality Products Inc"
+    }
+  ]
+}

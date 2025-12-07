@@ -1,0 +1,204 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15
+    container_name: uitrace-db
+    environment:
+      POSTGRES_DB: uitrace
+      POSTGRES_USER: uitrace
+      POSTGRES_PASSWORD: uitrace_dev_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./server/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - uitrace-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U uitrace -d uitrace"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis for caching and sessions
+  redis:
+    image: redis:7-alpine
+    container_name: uitrace-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - uitrace-network
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # UITrace Server (Python/FastAPI)
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: uitrace-server
+    environment:
+      DATABASE_URL: postgresql://uitrace:uitrace_dev_password@db:5432/uitrace
+      REDIS_URL: redis://redis:6379/0
+      SECRET_KEY: dev-secret-key-change-in-production
+      CORS_ORIGINS: http://localhost:3000,http://localhost:1420
+      LOG_LEVEL: debug
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./server:/app
+      - uploads_data:/app/uploads
+    networks:
+      - uitrace-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # UITrace Desktop Client (Development only)
+  desktop-dev:
+    build:
+      context: ./desktop-client
+      dockerfile: Dockerfile.dev
+    container_name: uitrace-desktop-dev
+    environment:
+      API_BASE_URL: http://localhost:8000/v1
+      RUST_LOG: debug
+    ports:
+      - "1420:1420"  # Tauri dev server
+    depends_on:
+      - server
+    volumes:
+      - ./desktop-client:/app
+      - /dev/bus/usb:/dev/bus/usb  # For USB device access if needed
+    networks:
+      - uitrace-network
+    profiles:
+      - desktop
+      - dev
+
+  # Selenium Grid Hub
+  selenium-hub:
+    image: selenium/hub:4.15.0
+    container_name: uitrace-selenium-hub
+    ports:
+      - "4444:4444"
+    environment:
+      GRID_MAX_SESSION: 5
+      GRID_BROWSER_TIMEOUT: 60
+      GRID_TIMEOUT: 60
+    networks:
+      - uitrace-network
+    profiles:
+      - selenium
+      - testing
+
+  # Chrome Node
+  chrome:
+    image: selenium/node-chrome:4.15.0
+    container_name: uitrace-chrome
+    depends_on:
+      - selenium-hub
+    environment:
+      HUB_HOST: selenium-hub
+      HUB_PORT: 4444
+      NODE_MAX_SESSION: 5
+      SCREEN_WIDTH: 1920
+      SCREEN_HEIGHT: 1080
+    volumes:
+      - /dev/shm:/dev/shm
+    networks:
+      - uitrace-network
+    profiles:
+      - selenium
+      - testing
+
+  # Firefox Node
+  firefox:
+    image: selenium/node-firefox:4.15.0
+    container_name: uitrace-firefox
+    depends_on:
+      - selenium-hub
+    environment:
+      HUB_HOST: selenium-hub
+      HUB_PORT: 4444
+      NODE_MAX_SESSION: 5
+      SCREEN_WIDTH: 1920
+      SCREEN_HEIGHT: 1080
+    volumes:
+      - /dev/shm:/dev/shm
+    networks:
+      - uitrace-network
+    profiles:
+      - selenium
+      - testing
+
+  # Prometheus for monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: uitrace-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+    networks:
+      - uitrace-network
+    profiles:
+      - monitoring
+      - production
+
+  # Grafana for visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: uitrace-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+    networks:
+      - uitrace-network
+    profiles:
+      - monitoring
+      - production
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  uploads_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+networks:
+  uitrace-network:
+    driver: bridge

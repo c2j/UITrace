@@ -1,0 +1,36 @@
+# Clippy配置 - Rust代码质量检查
+# T005: Setup code quality tools for Rust
+
+# 允许的警告级别
+allowed = [
+    "clippy::module_name_repetitions",
+    "clippy::similar_names",
+    "clippy::must_use_candidate",
+]
+
+# 拒绝的警告级别（提升为错误）
+deny = [
+    "clippy::all",
+    "clippy::correctness",
+    "clippy::suspicious",
+    "clippy::complexity",
+    "clippy::perf",
+    "clippy::style",
+]
+
+# 警告级别
+warn = [
+    "clippy::nursery",
+    "clippy::pedantic",
+]
+
+# 检查配置
+cognitive-complexity-threshold = 30
+too-many-arguments-threshold = 7
+type-complexity-threshold = 250
+trivial-copy-size-limit = 64
+single-char-binding-names-threshold = 4
+
+# 文档要求
+missing-docs-in-crate-items = true
+missing-docs-in-private-items = false

@@ -1,0 +1,193 @@
+{
+  "test_cases": [
+    {
+      "id": "UAT_001",
+      "name": "Script Creation and Validation",
+      "description": "Test creating and validating a test automation script",
+      "category": "script_management",
+      "priority": "high",
+      "prerequisites": [
+        "database_connection",
+        "test_data_available"
+      ],
+      "test_steps": [
+        {
+          "name": "Create test script",
+          "action": "create_script",
+          "script_content": {
+            "steps": [
+              {
+                "id": "step_1",
+                "action": "navigate",
+                "type": "navigate",
+                "url": "https://httpbin.org/html",
+                "order_index": 0,
+                "description": "Navigate to test page"
+              }
+            ],
+            "variables": {
+              "base_url": "https://httpbin.org"
+            }
+          }
+        },
+        {
+          "name": "Validate script content",
+          "action": "validate_script",
+          "script_content": {
+            "steps": [
+              {
+                "id": "step_1",
+                "action": "navigate",
+                "type": "navigate",
+                "url": "https://httpbin.org/html",
+                "order_index": 0,
+                "description": "Navigate to test page"
+              }
+            ],
+            "variables": {
+              "base_url": "https://httpbin.org"
+            }
+          }
+        }
+      ],
+      "expected_results": [
+        "Script created and compressed",
+        "Script validation: PASSED"
+      ],
+      "success_criteria": [
+        "Script is successfully created",
+        "Script validation passes",
+        "Content compression works correctly"
+      ]
+    },
+    {
+      "id": "UAT_002",
+      "name": "Browser Navigation and Screenshot",
+      "description": "Test browser navigation and screenshot capture",
+      "category": "browser_automation",
+      "priority": "high",
+      "prerequisites": [
+        "browser_service_available"
+      ],
+      "test_steps": [
+        {
+          "name": "Navigate to test page",
+          "action": "browser_action",
+          "browser_action": "navigate",
+          "url": "https://httpbin.org/html"
+        },
+        {
+          "name": "Take screenshot",
+          "action": "browser_action",
+          "browser_action": "screenshot"
+        }
+      ],
+      "expected_results": [
+        "Navigation to https://httpbin.org/html: SUCCESS",
+        "Screenshot captured"
+      ],
+      "success_criteria": [
+        "Browser navigation completes successfully",
+        "Screenshot is captured without errors"
+      ]
+    },
+    {
+      "id": "UAT_003",
+      "name": "Network Resilience Testing",
+      "description": "Test network resilience with retry mechanisms",
+      "category": "network_resilience",
+      "priority": "medium",
+      "prerequisites": [
+        "network_service_available"
+      ],
+      "test_steps": [
+        {
+          "name": "Make HTTP request",
+          "action": "network_request",
+          "method": "GET",
+          "url": "https://httpbin.org/get"
+        }
+      ],
+      "expected_results": [
+        "Network request GET https://httpbin.org/get: Status 200"
+      ],
+      "success_criteria": [
+        "Network request succeeds",
+        "Response status is 200"
+      ]
+    },
+    {
+      "id": "UAT_004",
+      "name": "Script Execution with Resilience",
+      "description": "Test script execution with error recovery",
+      "category": "execution_resilience",
+      "priority": "high",
+      "prerequisites": [
+        "browser_service_available",
+        "execution_service_available"
+      ],
+      "test_steps": [
+        {
+          "name": "Execute test script",
+          "action": "execute_script",
+          "execution_id": "uat_resilience_test",
+          "script_content": {
+            "steps": [
+              {
+                "id": "step_1",
+                "action": "navigate",
+                "type": "navigate",
+                "url": "https://httpbin.org/html",
+                "order_index": 0,
+                "description": "Navigate to test page"
+              },
+              {
+                "id": "step_2",
+                "action": "wait",
+                "type": "wait",
+                "duration": 1,
+                "order_index": 1,
+                "description": "Wait for page load"
+              }
+            ],
+            "variables": {
+              "wait_time": 1
+            }
+          }
+        }
+      ],
+      "expected_results": [
+        "Script execution: SUCCESS"
+      ],
+      "success_criteria": [
+        "Script execution completes successfully",
+        "All steps are executed without errors"
+      ]
+    },
+    {
+      "id": "UAT_005",
+      "name": "Performance Monitoring Validation",
+      "description": "Test performance monitoring and metrics collection",
+      "category": "performance_monitoring",
+      "priority": "medium",
+      "prerequisites": [
+        "performance_monitoring_available"
+      ],
+      "test_steps": [
+        {
+          "name": "Check system performance",
+          "action": "performance_check",
+          "cpu_threshold": 90.0,
+          "memory_threshold": 90.0
+        }
+      ],
+      "expected_results": [
+        "Performance check passed"
+      ],
+      "success_criteria": [
+        "Performance metrics are available",
+        "System resources are within acceptable limits"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+UITrace E2E Test Summary
+==================================================
+
+Total Tests: 6
+Passed: 5
+Failed: 1
+Success Rate: 83.3%
+Duration: 9.20s
+Timestamp: 2025-12-07T11:52:35.376211
+
+Recommendations:
+- 🔧 Review pytest E2E test failures

@@ -1,0 +1,345 @@
+{
+  "summary": {
+    "total_tests": 6,
+    "passed_tests": 4,
+    "failed_tests": 2,
+    "success_rate": 66.66666666666666,
+    "total_duration": 12.361685514450073,
+    "timestamp": "2025-12-07T11:50:26.988262"
+  },
+  "individual_tests": [
+    {
+      "name": "Network Resilience",
+      "success": true,
+      "duration": 8.078355073928833,
+      "timestamp": "2025-12-07T11:50:20.504981"
+    },
+    {
+      "name": "Script Service",
+      "success": false,
+      "duration": 0.27809762954711914,
+      "timestamp": "2025-12-07T11:50:20.783088"
+    },
+    {
+      "name": "Browser Automation",
+      "success": true,
+      "duration": 4.005025148391724,
+      "timestamp": "2025-12-07T11:50:24.788128"
+    },
+    {
+      "name": "Smart Selectors",
+      "success": true,
+      "duration": 4.76837158203125e-06,
+      "timestamp": "2025-12-07T11:50:24.788144"
+    },
+    {
+      "name": "Data Generation",
+      "success": true,
+      "duration": 0.0002028942108154297,
+      "timestamp": "2025-12-07T11:50:24.788351"
+    }
+  ],
+  "pytest_suite": {
+    "success": false,
+    "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.10, pytest-9.0.2, pluggy-1.6.0 -- /home/c2j/dev/venv_speckit/bin/python\ncachedir: .pytest_cache\nmetadata: {'Python': '3.12.10', 'Platform': 'Linux-6.8.0-87-generic-x86_64-with-glibc2.35', 'Packages': {'pytest': '9.0.2', 'pluggy': '1.6.0'}, 'Plugins': {'anyio': '4.12.0', 'json-report': '1.5.0', 'asyncio': '1.3.0', 'html': '4.1.1', 'cov': '7.0.0', 'metadata': '3.1.1'}, 'JAVA_HOME': '/usr/local/jdk-21.0.2/'}\nrootdir: /home/c2j/workspace/TEST/UITrace/server\nconfigfile: pyproject.toml\nplugins: anyio-4.12.0, json-report-1.5.0, asyncio-1.3.0, html-4.1.1, cov-7.0.0, metadata-3.1.1\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollecting ... collected 0 items / 1 error\n\n==================================== ERRORS ====================================\n_____________ ERROR collecting tests/test_e2e_script_recording.py ______________\nImportError while importing test module '/home/c2j/workspace/TEST/UITrace/server/tests/test_e2e_script_recording.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/_pytest/python.py:507: in importtestmodule\n    mod = import_path(\n/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/_pytest/pathlib.py:587: in import_path\n    importlib.import_module(module_name)\n/home/c2j/dev/miniforge3/lib/python3.12/importlib/__init__.py:90: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n<frozen importlib._bootstrap>:1387: in _gcd_import\n    ???\n<frozen importlib._bootstrap>:1360: in _find_and_load\n    ???\n<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked\n    ???\n<frozen importlib._bootstrap>:935: in _load_unlocked\n    ???\n/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/_pytest/assertion/rewrite.py:197: in exec_module\n    exec(co, module.__dict__)\ntests/test_e2e_script_recording.py:15: in <module>\n    from main import app\nmain.py:21: in <module>\n    from src.api import auth, scripts, data, results, users, projects\nsrc/api/auth.py:12: in <module>\n    from ..middleware.auth import get_current_user_id, create_access_token, create_refresh_token\nsrc/middleware/auth.py:13: in <module>\n    from starlette.middleware.base import HTTPConnectionMiddleware\nE   ImportError: cannot import name 'HTTPConnectionMiddleware' from 'starlette.middleware.base' (/home/c2j/dev/venv_speckit/lib/python3.12/site-packages/starlette/middleware/base.py)\n=============================== warnings summary ===============================\n../../../../dev/venv_speckit/lib/python3.12/site-packages/coverage/config.py:346\n  /home/c2j/dev/venv_speckit/lib/python3.12/site-packages/coverage/config.py:346: CoverageWarning: Unrecognized option '[tool.coverage.run] fail_under=' in config file pyproject.toml\n    warn(\n\n../../../../dev/venv_speckit/lib/python3.12/site-packages/coverage/config.py:346\n  /home/c2j/dev/venv_speckit/lib/python3.12/site-packages/coverage/config.py:346: CoverageWarning: Unrecognized option '[tool.coverage.run] report=' in config file pyproject.toml\n    warn(\n\ntests/test_data_generator.py:15\n  /home/c2j/workspace/TEST/UITrace/server/tests/test_data_generator.py:15: PytestCollectionWarning: cannot collect test class 'TestUser' because it has a __init__ constructor (from: tests/test_data_generator.py)\n    @dataclass\n\ntests/test_data_generator.py:29\n  /home/c2j/workspace/TEST/UITrace/server/tests/test_data_generator.py:29: PytestCollectionWarning: cannot collect test class 'TestProduct' because it has a __init__ constructor (from: tests/test_data_generator.py)\n    @dataclass\n\ntests/test_data_generator.py:41\n  /home/c2j/workspace/TEST/UITrace/server/tests/test_data_generator.py:41: PytestCollectionWarning: cannot collect test class 'TestOrder' because it has a __init__ constructor (from: tests/test_data_generator.py)\n    @dataclass\n\nsrc/core/config.py:12\n  /home/c2j/workspace/TEST/UITrace/server/src/core/config.py:12: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/\n    class Settings(BaseSettings):\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n--------------------------------- JSON report ----------------------------------\nreport saved to: tests/e2e_test_report.json\n- Generated html report: file:///home/c2j/workspace/TEST/UITrace/server/tests/e2e_test_report.html -\n=========================== short test summary info ============================\nERROR tests/test_e2e_script_recording.py\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n========================= 6 warnings, 1 error in 1.41s =========================\n",
+    "errors": "",
+    "duration": null
+  },
+  "test_data": {
+    "users": {
+      "data_type": "users",
+      "count": 5,
+      "generated_at": "2025-12-07T11:50:12.425913",
+      "data": [
+        {
+          "username": "sarahsmith229",
+          "email": "sarah.smith@test.com",
+          "first_name": "Sarah",
+          "last_name": "Smith",
+          "age": 23,
+          "country": "India",
+          "city": "S\u00e3o Paulo",
+          "phone": "+76 553035110",
+          "address": "521 Main Street, S\u00e3o Paulo, 22280, India",
+          "registration_date": "2025-03-02T09:41:25.425832"
+        },
+        {
+          "username": "lisasmith734",
+          "email": "smithl@yahoo.com",
+          "first_name": "Lisa",
+          "last_name": "Smith",
+          "age": 46,
+          "country": "Argentina",
+          "city": "Tokyo",
+          "phone": "+76 398704996",
+          "address": "107 Elm Drive, Tokyo, 65392, Argentina",
+          "registration_date": "2025-04-18T15:12:04.425865"
+        },
+        {
+          "username": "jamesjones105",
+          "email": "jonesj@gmail.com",
+          "first_name": "James",
+          "last_name": "Jones",
+          "age": 40,
+          "country": "Japan",
+          "city": "Mexico City",
+          "phone": "+45 748245888",
+          "address": "4334 Main Street, Mexico City, 70217, Japan",
+          "registration_date": "2025-07-03T17:50:41.425880"
+        },
+        {
+          "username": "sarahgonzalez301",
+          "email": "sarah850@test.com",
+          "first_name": "Sarah",
+          "last_name": "Gonzalez",
+          "age": 30,
+          "country": "Canada",
+          "city": "Buenos Aires",
+          "phone": "+1 (921) 271-1750",
+          "address": "3734 First Street, Buenos Aires, 20458, Canada",
+          "registration_date": "2025-11-04T15:58:32.425893"
+        },
+        {
+          "username": "lisabrown465",
+          "email": "lisa651@yahoo.com",
+          "first_name": "Lisa",
+          "last_name": "Brown",
+          "age": 41,
+          "country": "Spain",
+          "city": "Mumbai",
+          "phone": "+46 324956459",
+          "address": "4375 Oak Avenue, Mumbai, 89840, Spain",
+          "registration_date": "2025-08-11T02:15:47.425904"
+        }
+      ]
+    },
+    "products": {
+      "data_type": "products",
+      "count": 10,
+      "generated_at": "2025-12-07T11:50:12.425974",
+      "data": [
+        {
+          "name": "Eco-Friendly Scanner",
+          "description": "High-quality scanner with advanced features and modern design",
+          "price": 335.17,
+          "category": "Books",
+          "sku": "SKU59735",
+          "stock_quantity": 276,
+          "rating": 5.0,
+          "manufacturer": "Innovation Labs"
+        },
+        {
+          "name": "Stylish Keyboard",
+          "description": "High-quality keyboard with advanced features and modern design",
+          "price": 1372.38,
+          "category": "Health",
+          "sku": "SKU17331",
+          "stock_quantity": 234,
+          "rating": 4.6,
+          "manufacturer": "Innovation Labs"
+        },
+        {
+          "name": "Wireless Watch",
+          "description": "High-quality watch with advanced features and modern design",
+          "price": 429.86,
+          "category": "Automotive",
+          "sku": "SKU84341",
+          "stock_quantity": 897,
+          "rating": 4.4,
+          "manufacturer": "Global Industries"
+        },
+        {
+          "name": "Durable Monitor",
+          "description": "High-quality monitor with advanced features and modern design",
+          "price": 1770.52,
+          "category": "Home & Garden",
+          "sku": "SKU94259",
+          "stock_quantity": 469,
+          "rating": 3.3,
+          "manufacturer": "Superior Brands"
+        },
+        {
+          "name": "Advanced Scanner",
+          "description": "High-quality scanner with advanced features and modern design",
+          "price": 1496.56,
+          "category": "Books",
+          "sku": "SKU66155",
+          "stock_quantity": 919,
+          "rating": 4.2,
+          "manufacturer": "Elite Manufacturing"
+        },
+        {
+          "name": "Advanced Headphones",
+          "description": "High-quality headphones with advanced features and modern design",
+          "price": 190.91,
+          "category": "Automotive",
+          "sku": "SKU16175",
+          "stock_quantity": 881,
+          "rating": 3.2,
+          "manufacturer": "Prime Components"
+        },
+        {
+          "name": "Deluxe Printer",
+          "description": "High-quality printer with advanced features and modern design",
+          "price": 1196.85,
+          "category": "Health",
+          "sku": "SKU60432",
+          "stock_quantity": 390,
+          "rating": 4.2,
+          "manufacturer": "Superior Brands"
+        },
+        {
+          "name": "Eco-Friendly Watch",
+          "description": "High-quality watch with advanced features and modern design",
+          "price": 1363.76,
+          "category": "Beauty",
+          "sku": "SKU25014",
+          "stock_quantity": 698,
+          "rating": 4.8,
+          "manufacturer": "TechCorp"
+        },
+        {
+          "name": "Durable Tablet",
+          "description": "High-quality tablet with advanced features and modern design",
+          "price": 594.07,
+          "category": "Sports",
+          "sku": "SKU30730",
+          "stock_quantity": 464,
+          "rating": 3.0,
+          "manufacturer": "Global Industries"
+        },
+        {
+          "name": "Stylish Watch",
+          "description": "High-quality watch with advanced features and modern design",
+          "price": 1020.29,
+          "category": "Office",
+          "sku": "SKU23947",
+          "stock_quantity": 891,
+          "rating": 4.3,
+          "manufacturer": "Quality Products Inc"
+        }
+      ]
+    },
+    "script_test_data": {
+      "test_urls": [
+        "https://httpbin.org/html",
+        "https://httpbin.org/forms/post",
+        "https://httpbin.org/delay/1",
+        "https://example.com",
+        "https://www.google.com"
+      ],
+      "test_selectors": [
+        {
+          "type": "css",
+          "selector": "h1",
+          "description": "Heading element"
+        },
+        {
+          "type": "css",
+          "selector": "input[type='text']",
+          "description": "Text input"
+        },
+        {
+          "type": "css",
+          "selector": "button",
+          "description": "Button element"
+        },
+        {
+          "type": "id",
+          "selector": "search-input",
+          "description": "Search input field"
+        },
+        {
+          "type": "class",
+          "selector": "btn-primary",
+          "description": "Primary button"
+        }
+      ],
+      "test_texts": [
+        "Hello World",
+        "Test Automation",
+        "UITrace Platform",
+        "End-to-End Testing",
+        "Selenium WebDriver"
+      ],
+      "test_delays": [
+        1,
+        2,
+        3,
+        5,
+        10
+      ]
+    },
+    "browser_scenarios": [
+      {
+        "name": "Simple Navigation Test",
+        "steps": [
+          {
+            "action": "navigate",
+            "url": "https://httpbin.org/html"
+          },
+          {
+            "action": "wait",
+            "duration": 2
+          },
+          {
+            "action": "screenshot"
+          }
+        ]
+      },
+      {
+        "name": "Form Interaction Test",
+        "steps": [
+          {
+            "action": "navigate",
+            "url": "https://httpbin.org/forms/post"
+          },
+          {
+            "action": "input",
+            "selector": "input[name='custname']",
+            "text": "John Doe"
+          },
+          {
+            "action": "input",
+            "selector": "input[name='custtel']",
+            "text": "123-456-7890"
+          },
+          {
+            "action": "click",
+            "selector": "button[type='submit']"
+          },
+          {
+            "action": "wait",
+            "duration": 3
+          }
+        ]
+      },
+      {
+        "name": "Element Finding Test",
+        "steps": [
+          {
+            "action": "navigate",
+            "url": "https://example.com"
+          },
+          {
+            "action": "find",
+            "selector": "h1",
+            "selector_type": "tag"
+          },
+          {
+            "action": "find",
+            "selector": "p",
+            "selector_type": "tag"
+          },
+          {
+            "action": "screenshot"
+          }
+        ]
+      }
+    ]
+  },
+  "recommendations": [
+    "\ud83d\udd27 Fix 1 failed component tests",
+    "\ud83d\udd27 Review pytest E2E test failures"
+  ]
+}

@@ -79,6 +79,13 @@ description: "Task list for UI Automation Testing Platform implementation"
 - [ ] T020 [P] Setup WebSocket support for real-time communication
 - [ ] T021 [P] Implement file upload/download capabilities for CSV/Excel and scripts
 
+### Network Resilience Infrastructure
+
+- [ ] T021a [P] Implement offline mode detection and status monitoring in desktop-client/src/services/network_monitor.rs
+- [ ] T021b [P] Create local caching mechanism for scripts and test data in desktop-client/src/services/local_cache.rs
+- [ ] T021c [P] Implement automatic reconnection with exponential backoff in desktop-client/src/services/reconnection.rs
+- [ ] T021d [P] Add network state persistence and recovery in desktop-client/src/services/state_recovery.rs
+
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
 ---
@@ -94,6 +101,8 @@ description: "Task list for UI Automation Testing Platform implementation"
 - [ ] T022 [P] [US1] Integration test for script recording workflow in tests/e2e/test_recording.py
 - [ ] T023 [P] [US1] Integration test for script editing functionality in tests/e2e/test_script_editing.py
 - [ ] T024 [P] [US1] End-to-end test for complete record-edit-replay workflow in tests/e2e/test_full_workflow.py
+- [ ] T024a [P] [US1] Integration test for network interruption handling during recording in tests/e2e/test_network_interruption_recording.py
+- [ ] T024b [P] [US1] Integration test for offline mode script replay in tests/e2e/test_offline_replay.py
 
 ### Implementation for User Story 1
 
@@ -106,6 +115,8 @@ description: "Task list for UI Automation Testing Platform implementation"
 - [ ] T031 [US1] Implement script serialization/deserialization in desktop-client/src/services/script_service.rs
 - [ ] T032 [US1] Add script storage and retrieval functionality in desktop-client/src/services/storage_service.rs
 - [ ] T033 [US1] Implement browser session management in desktop-client/src/services/browser_session.rs
+- [ ] T033a [P] [US1] Integrate network resilience features with recording engine in desktop-client/src/services/recorder_network.rs
+- [ ] T033b [US1] Add offline recording capability with local queuing in desktop-client/src/services/offline_recorder.rs
 - [ ] T034 [P] [US1] Create API endpoints for script management in server/src/api/scripts.py
 - [ ] T035 [P] [US1] Implement script CRUD operations in server/src/services/script_service.py
 - [ ] T036 [P] [US1] Add script validation and versioning in server/src/services/script_validation.py

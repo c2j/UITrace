@@ -1,0 +1,46 @@
+{
+  "$schema": "./node_modules/@tauri-apps/schema/config.json",
+  "build": {
+    "beforeDevCommand": "",
+    "beforeBuildCommand": "",
+    "devPath": "../src-ui",
+    "distDir": "../src-ui/dist",
+    "withGlobalTauri": false
+  },
+  "package": {
+    "productName": "UITrace",
+    "version": "0.1.0"
+  },
+  "tauri": {
+    "allowlist": {
+      "all": true
+    },
+    "bundle": {
+      "active": false,
+      "identifier": "com.uitrace.desktop"
+    },
+    "security": {
+      "csp": null
+    },
+    "updater": {
+      "active": false
+    },
+    "windows": [
+      {
+        "label": "main",
+        "title": "UITrace Desktop Client",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 800,
+        "minHeight": 600,
+        "center": true,
+        "url": "index.html"
+      }
+    ]
+  },
+  "plugins": {
+    "updater": {
+      "active": false
+    }
+  }
+}

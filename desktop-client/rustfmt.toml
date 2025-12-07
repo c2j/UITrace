@@ -1,0 +1,33 @@
+# Rust代码格式化配置
+# T005: Setup code quality tools for Rust
+
+# 最大行宽
+max_width = 100
+# 使用小制表符进行缩进
+hard_tabs = false
+# 制表符宽度
+tab_spaces = 4
+# 在注释中使用换行符
+wrap_comments = true
+# 格式化代码中的注释
+format_code_in_doc_comments = true
+# 在where子句前换行
+where_single_line = false
+# 在函数定义前换行
+fn_single_line = false
+# 在控制流语句中使用大括号
+brace_style = "SameLineWhere"
+# 在尾随逗号后添加空格
+trailing_comma = "Vertical"
+# 合并导入语句
+imports_granularity = "Module"
+# 分组导入语句
+group_imports = "StdExternalCrate"
+# 使用字段初始化简写
+use_field_init_shorthand = true
+# 强制使用显式ABI
+force_explicit_abi = true
+# 缩进样式
+indent_style = "Block"
+# 空格表示制表符
+use_small_heuristics = "Default"

@@ -1,0 +1,47 @@
+{
+  "summary": {
+    "period_hours": 24,
+    "system": {
+      "avg_cpu_usage": 11.6,
+      "avg_memory_usage": 12.0,
+      "avg_disk_usage": 94.01211380720768,
+      "max_cpu_usage": 11.6,
+      "max_memory_usage": 12.0,
+      "max_disk_usage": 94.01211380720768
+    },
+    "application": {
+      "total_requests": 0,
+      "total_errors": 0,
+      "error_rate_percent": 0,
+      "response_time_stats": {}
+    },
+    "sample_count": 1,
+    "generated_at": "2025-12-07T12:07:02.144061"
+  },
+  "current": {
+    "system": {
+      "cpu_usage": 11.6,
+      "memory_usage": 12.0,
+      "disk_usage": 94.01211380720768,
+      "process_count": 409,
+      "thread_count": 1557,
+      "network_io": {
+        "bytes_sent": 16452339861,
+        "bytes_recv": 70502971741,
+        "packets_sent": 34550558,
+        "packets_recv": 60027353
+      }
+    },
+    "application": {
+      "request_count": 0,
+      "error_count": 0,
+      "response_times": [],
+      "active_browser_sessions": 0,
+      "active_script_executions": 0
+    },
+    "timestamp": "2025-12-07T12:06:54.159105"
+  },
+  "browser_sessions": 0,
+  "script_executions": 0,
+  "exported_at": "2025-12-07T12:07:02.144067"
+}

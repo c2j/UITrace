@@ -19,7 +19,7 @@ Building a high-performance, data-driven desktop UI automation testing platform 
 **Testing**: Rust cargo test (client), pytest (server), integration tests for end-to-end workflows
 **Target Platform**: Cross-platform desktop (Windows, macOS, Linux) + Web-based server management
 **Project Type**: Client-Server architecture with REST API communication
-**Performance Goals**: <500ms average step execution time, <100MB client memory baseline, 1000+ concurrent server test sessions
+**Performance Goals**: <500ms average step execution time (configurable, default 500ms), <100MB client memory baseline, 1000+ concurrent server test sessions
 **Constraints**: 98%+ script replay success rate with minor UI changes, <2s client startup time, enterprise-grade security with OAuth2/JWT
 
 ### Key Architecture Components
@@ -35,10 +35,11 @@ Building a high-performance, data-driven desktop UI automation testing platform 
 
 - **WebSocket vs HTTP Polling**: Real-time communication between client and server for progress updates
 - **Container Orchestration**: Docker Compose setup for development and production deployment
-- **Browser Driver Strategy**: Selenium Grid vs. local WebDriver instances for parallel execution
+- **Browser Driver Strategy**: WebDriver-based approach using thirtyfour crate for Rust-WebDriver integration
 - **Database Scaling**: PostgreSQL read replicas for high-volume result processing
 - **Security Model**: OAuth2 provider selection (Google, Microsoft, GitHub) and SSO integration approach
 - **Monitoring Stack**: Prometheus/Grafana integration for production observability
+- **Network Resilience**: Offline mode with local caching and automatic reconnection mechanisms
 
 ## Constitution Check
 
@@ -47,8 +48,9 @@ Building a high-performance, data-driven desktop UI automation testing platform 
 ### Performance-First Architecture ✓
 - Rust client with zero-cost abstractions for UI event processing
 - Tokio async runtime for non-blocking operations
-- <500ms step execution target defined and achievable
+- <500ms step execution target (configurable, default 500ms) defined and achievable
 - Client memory usage target <100MB baseline established
+- **Note**: Performance target balances constitution requirements with practical WebDriver implementation constraints
 
 ### Cross-Platform Consistency ✓
 - Tauri framework ensures identical behavior across Windows, macOS, Linux
@@ -61,6 +63,7 @@ Building a high-performance, data-driven desktop UI automation testing platform 
 - Configurable timeout handling with exponential backoff
 - Element availability polling before interaction attempts
 - Comprehensive error recovery and logging mechanisms
+- Network resilience with offline mode support and automatic reconnection
 
 ### Data-Driven Testing Excellence ✓
 - CSV/Excel integration with Rust calamine and Python pandas

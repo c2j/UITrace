@@ -1,0 +1,197 @@
+{
+  "data_type": "orders",
+  "count": 15,
+  "generated_at": "2025-12-07T11:45:38.045563",
+  "data": [
+    {
+      "order_id": "ORD2025233827",
+      "user_email": "pjones@company.com",
+      "product_skus": [
+        "SKU68008",
+        "SKU86019",
+        "SKU45992"
+      ],
+      "total_amount": 4023.29,
+      "order_date": "2025-12-03T10:03:34.045399",
+      "status": "pending",
+      "shipping_address": "5443 Maple Lane, Paris, 97806, Brazil"
+    },
+    {
+      "order_id": "ORD2025584125",
+      "user_email": "pjones@company.com",
+      "product_skus": [
+        "SKU56105",
+        "SKU67154",
+        "SKU49363",
+        "SKU72216",
+        "SKU49446"
+      ],
+      "total_amount": 5948.71,
+      "order_date": "2025-11-16T07:29:24.045422",
+      "status": "pending",
+      "shipping_address": "5443 Maple Lane, Paris, 97806, Brazil"
+    },
+    {
+      "order_id": "ORD2025453894",
+      "user_email": "rodriguezd@test.com",
+      "product_skus": [
+        "SKU23970",
+        "SKU32241",
+        "SKU45992",
+        "SKU45774"
+      ],
+      "total_amount": 5052.44,
+      "order_date": "2025-11-25T21:28:28.045446",
+      "status": "shipped",
+      "shipping_address": "2443 Washington Drive, Stockholm, 14722, France"
+    },
+    {
+      "order_id": "ORD2025885408",
+      "user_email": "pjones@company.com",
+      "product_skus": [
+        "SKU49363",
+        "SKU80798",
+        "SKU67154"
+      ],
+      "total_amount": 2605.43,
+      "order_date": "2025-12-03T16:13:45.045464",
+      "status": "pending",
+      "shipping_address": "5443 Maple Lane, Paris, 97806, Brazil"
+    },
+    {
+      "order_id": "ORD2025890870",
+      "user_email": "jennifer316@gmail.com",
+      "product_skus": [
+        "SKU49363",
+        "SKU19171"
+      ],
+      "total_amount": 2177.11,
+      "order_date": "2025-11-08T23:54:47.045475",
+      "status": "processing",
+      "shipping_address": "4089 Oak Avenue, Berlin, 56357, Netherlands"
+    },
+    {
+      "order_id": "ORD2025259784",
+      "user_email": "robert501@gmail.com",
+      "product_skus": [
+        "SKU45774"
+      ],
+      "total_amount": 981.58,
+      "order_date": "2025-11-19T01:41:08.045488",
+      "status": "processing",
+      "shipping_address": "4534 Main Street, Mumbai, 10464, Japan"
+    },
+    {
+      "order_id": "ORD2025328552",
+      "user_email": "lisa.rodriguez@company.com",
+      "product_skus": [
+        "SKU56105"
+      ],
+      "total_amount": 959.19,
+      "order_date": "2025-11-30T01:33:51.045496",
+      "status": "refunded",
+      "shipping_address": "7542 Second Avenue, Sydney, 50001, France"
+    },
+    {
+      "order_id": "ORD2025426147",
+      "user_email": "rodriguezd@test.com",
+      "product_skus": [
+        "SKU86019",
+        "SKU35144",
+        "SKU45774"
+      ],
+      "total_amount": 2960.34,
+      "order_date": "2025-11-12T17:42:17.045504",
+      "status": "cancelled",
+      "shipping_address": "2443 Washington Drive, Stockholm, 14722, France"
+    },
+    {
+      "order_id": "ORD2025849747",
+      "user_email": "jmiller@outlook.com",
+      "product_skus": [
+        "SKU56105",
+        "SKU68008",
+        "SKU45774"
+      ],
+      "total_amount": 3841.35,
+      "order_date": "2025-11-17T02:49:53.045513",
+      "status": "pending",
+      "shipping_address": "1189 Main Street, S\u00e3o Paulo, 70068, Mexico"
+    },
+    {
+      "order_id": "ORD2025991597",
+      "user_email": "john986@gmail.com",
+      "product_skus": [
+        "SKU35144",
+        "SKU60328"
+      ],
+      "total_amount": 2552.79,
+      "order_date": "2025-12-06T15:17:26.045520",
+      "status": "pending",
+      "shipping_address": "5664 Second Avenue, Paris, 67199, India"
+    },
+    {
+      "order_id": "ORD2025658623",
+      "user_email": "john986@gmail.com",
+      "product_skus": [
+        "SKU42662"
+      ],
+      "total_amount": 109.93,
+      "order_date": "2025-11-28T06:51:25.045528",
+      "status": "refunded",
+      "shipping_address": "5664 Second Avenue, Paris, 67199, India"
+    },
+    {
+      "order_id": "ORD2025778998",
+      "user_email": "jennifer316@gmail.com",
+      "product_skus": [
+        "SKU18418"
+      ],
+      "total_amount": 1415.77,
+      "order_date": "2025-11-24T01:19:25.045535",
+      "status": "pending",
+      "shipping_address": "4089 Oak Avenue, Berlin, 56357, Netherlands"
+    },
+    {
+      "order_id": "ORD2025841666",
+      "user_email": "pjones@company.com",
+      "product_skus": [
+        "SKU35144",
+        "SKU72216",
+        "SKU42662",
+        "SKU45992"
+      ],
+      "total_amount": 4275.88,
+      "order_date": "2025-11-14T22:00:29.045543",
+      "status": "delivered",
+      "shipping_address": "5443 Maple Lane, Paris, 97806, Brazil"
+    },
+    {
+      "order_id": "ORD2025965845",
+      "user_email": "maria.smith@yahoo.com",
+      "product_skus": [
+        "SKU72277",
+        "SKU65069",
+        "SKU80798",
+        "SKU45992",
+        "SKU72216"
+      ],
+      "total_amount": 4617.73,
+      "order_date": "2025-12-06T06:02:36.045552",
+      "status": "shipped",
+      "shipping_address": "9065 Elm Drive, Beijing, 45697, Argentina"
+    },
+    {
+      "order_id": "ORD2025572700",
+      "user_email": "jennifer316@gmail.com",
+      "product_skus": [
+        "SKU49363",
+        "SKU72277"
+      ],
+      "total_amount": 1939.55,
+      "order_date": "2025-11-19T07:52:55.045559",
+      "status": "delivered",
+      "shipping_address": "4089 Oak Avenue, Berlin, 56357, Netherlands"
+    }
+  ]
+}

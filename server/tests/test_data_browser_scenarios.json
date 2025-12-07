@@ -1,0 +1,67 @@
+[
+  {
+    "name": "Simple Navigation Test",
+    "steps": [
+      {
+        "action": "navigate",
+        "url": "https://httpbin.org/html"
+      },
+      {
+        "action": "wait",
+        "duration": 2
+      },
+      {
+        "action": "screenshot"
+      }
+    ]
+  },
+  {
+    "name": "Form Interaction Test",
+    "steps": [
+      {
+        "action": "navigate",
+        "url": "https://httpbin.org/forms/post"
+      },
+      {
+        "action": "input",
+        "selector": "input[name='custname']",
+        "text": "John Doe"
+      },
+      {
+        "action": "input",
+        "selector": "input[name='custtel']",
+        "text": "123-456-7890"
+      },
+      {
+        "action": "click",
+        "selector": "button[type='submit']"
+      },
+      {
+        "action": "wait",
+        "duration": 3
+      }
+    ]
+  },
+  {
+    "name": "Element Finding Test",
+    "steps": [
+      {
+        "action": "navigate",
+        "url": "https://example.com"
+      },
+      {
+        "action": "find",
+        "selector": "h1",
+        "selector_type": "tag"
+      },
+      {
+        "action": "find",
+        "selector": "p",
+        "selector_type": "tag"
+      },
+      {
+        "action": "screenshot"
+      }
+    ]
+  }
+]

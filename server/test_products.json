@@ -1,0 +1,207 @@
+{
+  "data_type": "products",
+  "count": 20,
+  "generated_at": "2025-12-07T11:45:38.044838",
+  "data": [
+    {
+      "name": "Advanced Headphones",
+      "description": "High-quality headphones with advanced features and modern design",
+      "price": 1527.4,
+      "category": "Jewelry",
+      "sku": "SKU80697",
+      "stock_quantity": 976,
+      "rating": 4.6,
+      "manufacturer": "Precision Works"
+    },
+    {
+      "name": "Premium Mouse",
+      "description": "High-quality mouse with advanced features and modern design",
+      "price": 982.33,
+      "category": "Food",
+      "sku": "SKU24662",
+      "stock_quantity": 951,
+      "rating": 3.7,
+      "manufacturer": "Precision Works"
+    },
+    {
+      "name": "Advanced Laptop",
+      "description": "High-quality laptop with advanced features and modern design",
+      "price": 1757.24,
+      "category": "Sports",
+      "sku": "SKU20322",
+      "stock_quantity": 87,
+      "rating": 4.5,
+      "manufacturer": "Innovation Labs"
+    },
+    {
+      "name": "Eco-Friendly Headphones",
+      "description": "High-quality headphones with advanced features and modern design",
+      "price": 1322.9,
+      "category": "Clothing",
+      "sku": "SKU82063",
+      "stock_quantity": 169,
+      "rating": 3.5,
+      "manufacturer": "Quality Products Inc"
+    },
+    {
+      "name": "Wireless Camera",
+      "description": "High-quality camera with advanced features and modern design",
+      "price": 1428.77,
+      "category": "Jewelry",
+      "sku": "SKU62296",
+      "stock_quantity": 687,
+      "rating": 4.3,
+      "manufacturer": "Innovation Labs"
+    },
+    {
+      "name": "Eco-Friendly Monitor",
+      "description": "High-quality monitor with advanced features and modern design",
+      "price": 503.33,
+      "category": "Beauty",
+      "sku": "SKU18392",
+      "stock_quantity": 346,
+      "rating": 3.0,
+      "manufacturer": "Global Industries"
+    },
+    {
+      "name": "Advanced Mouse",
+      "description": "High-quality mouse with advanced features and modern design",
+      "price": 24.31,
+      "category": "Food",
+      "sku": "SKU92719",
+      "stock_quantity": 60,
+      "rating": 3.5,
+      "manufacturer": "Innovation Labs"
+    },
+    {
+      "name": "Portable Smartphone",
+      "description": "High-quality smartphone with advanced features and modern design",
+      "price": 564.17,
+      "category": "Electronics",
+      "sku": "SKU73624",
+      "stock_quantity": 219,
+      "rating": 4.1,
+      "manufacturer": "Innovation Labs"
+    },
+    {
+      "name": "Ergonomic Mouse",
+      "description": "High-quality mouse with advanced features and modern design",
+      "price": 493.56,
+      "category": "Office",
+      "sku": "SKU71993",
+      "stock_quantity": 826,
+      "rating": 3.8,
+      "manufacturer": "Prime Components"
+    },
+    {
+      "name": "Professional Printer",
+      "description": "High-quality printer with advanced features and modern design",
+      "price": 715.05,
+      "category": "Clothing",
+      "sku": "SKU63883",
+      "stock_quantity": 478,
+      "rating": 4.7,
+      "manufacturer": "Superior Brands"
+    },
+    {
+      "name": "Durable Printer",
+      "description": "High-quality printer with advanced features and modern design",
+      "price": 130.62,
+      "category": "Electronics",
+      "sku": "SKU54473",
+      "stock_quantity": 819,
+      "rating": 4.7,
+      "manufacturer": "Global Industries"
+    },
+    {
+      "name": "Advanced Camera",
+      "description": "High-quality camera with advanced features and modern design",
+      "price": 288.96,
+      "category": "Home & Garden",
+      "sku": "SKU34050",
+      "stock_quantity": 285,
+      "rating": 3.9,
+      "manufacturer": "Prime Components"
+    },
+    {
+      "name": "Smart Keyboard",
+      "description": "High-quality keyboard with advanced features and modern design",
+      "price": 110.67,
+      "category": "Clothing",
+      "sku": "SKU80855",
+      "stock_quantity": 856,
+      "rating": 3.0,
+      "manufacturer": "Global Industries"
+    },
+    {
+      "name": "Advanced Headphones",
+      "description": "High-quality headphones with advanced features and modern design",
+      "price": 976.43,
+      "category": "Clothing",
+      "sku": "SKU38016",
+      "stock_quantity": 885,
+      "rating": 3.8,
+      "manufacturer": "Superior Brands"
+    },
+    {
+      "name": "Deluxe Speaker",
+      "description": "High-quality speaker with advanced features and modern design",
+      "price": 1970.76,
+      "category": "Electronics",
+      "sku": "SKU44760",
+      "stock_quantity": 948,
+      "rating": 4.6,
+      "manufacturer": "TechCorp"
+    },
+    {
+      "name": "Compact Speaker",
+      "description": "High-quality speaker with advanced features and modern design",
+      "price": 318.05,
+      "category": "Beauty",
+      "sku": "SKU48890",
+      "stock_quantity": 222,
+      "rating": 4.9,
+      "manufacturer": "Prime Components"
+    },
+    {
+      "name": "Stylish Keyboard",
+      "description": "High-quality keyboard with advanced features and modern design",
+      "price": 1498.47,
+      "category": "Jewelry",
+      "sku": "SKU17492",
+      "stock_quantity": 51,
+      "rating": 4.2,
+      "manufacturer": "TechCorp"
+    },
+    {
+      "name": "Eco-Friendly Headphones",
+      "description": "High-quality headphones with advanced features and modern design",
+      "price": 1921.95,
+      "category": "Food",
+      "sku": "SKU20500",
+      "stock_quantity": 871,
+      "rating": 3.4,
+      "manufacturer": "TechCorp"
+    },
+    {
+      "name": "Professional Printer",
+      "description": "High-quality printer with advanced features and modern design",
+      "price": 813.51,
+      "category": "Jewelry",
+      "sku": "SKU84668",
+      "stock_quantity": 252,
+      "rating": 4.2,
+      "manufacturer": "Innovation Labs"
+    },
+    {
+      "name": "Ergonomic Smartphone",
+      "description": "High-quality smartphone with advanced features and modern design",
+      "price": 1318.17,
+      "category": "Electronics",
+      "sku": "SKU84085",
+      "stock_quantity": 535,
+      "rating": 3.6,
+      "manufacturer": "Superior Brands"
+    }
+  ]
+}
