@@ -1,0 +1,11 @@
+field_name,field_value,field_type,expected_validation,error_message
+email,user@example.com,email,valid,Field is valid
+email,invalid-email,email,invalid,Please enter a valid email address
+age,25,number,valid,Field is valid
+age,not_a_number,number,invalid,Please enter a valid number
+phone,+1234567890,phone,valid,Field is valid
+phone,123,phone,invalid,Please enter a valid phone number
+url,https://example.com,url,valid,Field is valid
+url,not-a-url,url,invalid,Please enter a valid URL
+country,USA,country,valid,Field is valid
+country,XX,country,invalid,Please select a valid country

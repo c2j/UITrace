@@ -1,0 +1,6 @@
+product_name,product_id,price,quantity,expected_total,shipping_method
+cotton_tshirt,SKU001,29.99,2,59.98,Standard
+running_shoes,SKU002,89.95,1,89.95,Express
+wireless_mouse,SKU003,24.99,3,74.97,Priority
+laptop_stand,SKU004,49.99,1,49.99,Standard
+usb_cable,SKU005,12.99,5,64.95,Standard

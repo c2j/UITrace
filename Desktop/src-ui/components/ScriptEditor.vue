@@ -206,17 +206,29 @@
         {{ saveStatus.message }}
       </div>
     </div>
+
+    <!-- Step Editor Modal -->
+    <StepEditorModal
+      :is-open="isStepEditorOpen"
+      :step="currentEditingStep"
+      @close="closeStepEditor"
+      @save="updateStep"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { invoke } from '@tauri-apps/api/tauri'
+import StepEditorModal from './StepEditorModal.vue'
 
 // State
 const isRecording = ref(false)
 const saveStatus = ref(null)
 const tagsInput = ref('')
+const isStepEditorOpen = ref(false)
+const currentEditingStep = ref(null)
+const currentEditingIndex = ref(-1)
 
 // Script data
 const scriptData = ref({
@@ -303,8 +315,9 @@ const addNewStep = () => {
 }
 
 const editStep = (index) => {
-  // TODO: Implement step editing modal
-  console.log('Edit step:', index)
+  currentEditingIndex.value = index
+  currentEditingStep.value = { ...scriptData.value.steps[index] }
+  isStepEditorOpen.value = true
 }
 
 const duplicateStep = (index) => {
@@ -331,6 +344,21 @@ const showStatus = (message, type = 'info') => {
   setTimeout(() => {
     saveStatus.value = null
   }, 5000)
+}
+
+// Step Editor Methods
+const closeStepEditor = () => {
+  isStepEditorOpen.value = false
+  currentEditingStep.value = null
+  currentEditingIndex.value = -1
+}
+
+const updateStep = (updatedStep) => {
+  if (currentEditingIndex.value >= 0) {
+    scriptData.value.steps[currentEditingIndex.value] = updatedStep
+    showStatus('Step updated successfully', 'success')
+  }
+  closeStepEditor()
 }
 
 // Generate new script ID on mount

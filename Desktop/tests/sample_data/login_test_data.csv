@@ -1,0 +1,6 @@
+username,password,email,expected_message,login_button_text
+alice@example.com,password123,alice@example.com,Welcome Alice,Login
+bob@example.com,secret456,bob@example.com,Welcome Bob,Sign In
+carol@example.com,test789,carol@example.com,Welcome Carol,Log In
+david@example.com,secure321,david@example.com,Welcome David,Enter
+eve@example.com,pass999,eve@example.com,Welcome Eve,Access
