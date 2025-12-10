@@ -1,0 +1,632 @@
+openapi: 3.0.3
+info:
+  title: UITrace API
+  description: API specification for the UITrace Web Console, supporting test automation management, execution reporting, and infrastructure control.
+  version: 1.0.0
+servers:
+  - url: /api/v1
+    description: Main API Server
+
+paths:
+  # ----------------------------
+  # Projects & Modules
+  # ----------------------------
+  /projects:
+    get:
+      summary: List all projects
+      tags: [Projects]
+      responses:
+        '200':
+          description: A list of projects with their version summaries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+
+  /projects/{projectId}/versions/{versionId}:
+    get:
+      summary: Get detailed project version
+      description: Returns modules, scripts hierarchy, and stats for a specific version.
+      tags: [Projects]
+      parameters:
+        - in: path
+          name: projectId
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: versionId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Project version details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectVersion'
+
+  # ----------------------------
+  # Scripts
+  # ----------------------------
+  /scripts/{scriptId}:
+    get:
+      summary: Get script details
+      tags: [Scripts]
+      parameters:
+        - in: path
+          name: scriptId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Full script object including steps
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Script'
+    put:
+      summary: Update script
+      tags: [Scripts]
+      parameters:
+        - in: path
+          name: scriptId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Script'
+      responses:
+        '200':
+          description: Script updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Script'
+
+  /scripts/{scriptId}/run:
+    post:
+      summary: Execute a script
+      description: Triggers an immediate execution of the test script.
+      tags: [Scripts]
+      parameters:
+        - in: path
+          name: scriptId
+          schema:
+            type: string
+          required: true
+      responses:
+        '202':
+          description: Execution started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  executionId:
+                    type: string
+                  status:
+                    type: string
+                    example: "PENDING"
+
+  # ----------------------------
+  # Test Executions (Results)
+  # ----------------------------
+  /executions:
+    get:
+      summary: List execution history
+      tags: [Executions]
+      parameters:
+        - in: query
+          name: project
+          schema:
+            type: string
+          description: Filter by project name
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 50
+      responses:
+        '200':
+          description: List of recent executions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExecutionSummary'
+
+  /executions/{executionId}:
+    get:
+      summary: Get execution details
+      tags: [Executions]
+      parameters:
+        - in: path
+          name: executionId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Detailed execution report including metrics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionDetail'
+
+  /executions/{executionId}/logs:
+    get:
+      summary: Get execution logs
+      tags: [Executions]
+      parameters:
+        - in: path
+          name: executionId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Chronological logs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TestResultLog'
+
+  /executions/{executionId}/trace:
+    get:
+      summary: Download execution trace
+      tags: [Executions]
+      parameters:
+        - in: path
+          name: executionId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Binary zip file containing Playwright/Selenium trace
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+
+  /executions/{executionId}/visual-diff:
+    get:
+      summary: Get visual regression data
+      tags: [Executions]
+      parameters:
+        - in: path
+          name: executionId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Visual comparison data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VisualDiffData'
+
+  /executions/{executionId}/visual-diff/accept:
+    post:
+      summary: Accept visual baseline
+      description: Promotes the 'actual' image to be the new 'baseline'.
+      tags: [Executions]
+      parameters:
+        - in: path
+          name: executionId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Baseline updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  # ----------------------------
+  # Stats
+  # ----------------------------
+  /stats/daily:
+    get:
+      summary: Get daily trend statistics
+      tags: [Stats]
+      responses:
+        '200':
+          description: 7-day trend data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    pass:
+                      type: integer
+                    fail:
+                      type: integer
+                    skip:
+                      type: integer
+
+  # ----------------------------
+  # Server Nodes
+  # ----------------------------
+  /nodes:
+    get:
+      summary: List execution nodes
+      tags: [Nodes]
+      responses:
+        '200':
+          description: List of connected server nodes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServerNode'
+    post:
+      summary: Add/Scan for new node
+      tags: [Nodes]
+      responses:
+        '200':
+          description: Scan initiated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jobId:
+                    type: string
+
+  /nodes/{nodeId}/action:
+    post:
+      summary: Perform node action
+      tags: [Nodes]
+      parameters:
+        - in: path
+          name: nodeId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [restart, shutdown]
+      responses:
+        '200':
+          description: Action queued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  # ----------------------------
+  # Settings
+  # ----------------------------
+  /settings:
+    get:
+      summary: Get global settings
+      tags: [Settings]
+      responses:
+        '200':
+          description: System configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemSettings'
+    put:
+      summary: Update global settings
+      tags: [Settings]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SystemSettings'
+      responses:
+        '200':
+          description: Settings saved
+
+components:
+  schemas:
+    # ------------------
+    # Enums & Primitives
+    # ------------------
+    ActionType:
+      type: string
+      enum:
+        - navigate
+        - click
+        - type
+        - assert_text
+        - screenshot
+
+    Locator:
+      type: object
+      required: [type, value, priority]
+      properties:
+        type:
+          type: string
+          enum: [id, css, xpath]
+        value:
+          type: string
+        priority:
+          type: integer
+
+    # ------------------
+    # Script Models
+    # ------------------
+    ScriptStep:
+      type: object
+      required: [id, name, action]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        action:
+          $ref: '#/components/schemas/ActionType'
+        value:
+          type: string
+        expectedValue:
+          type: string
+        timeout:
+          type: integer
+        selectors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Locator'
+
+    Script:
+      type: object
+      required: [id, name, module, steps]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        module:
+          type: string
+        description:
+          type: string
+        priority:
+          type: string
+          enum: [P0, P1, P2]
+        tags:
+          type: array
+          items:
+            type: string
+        lastModifiedBy:
+          type: string
+        lastRunStatus:
+          type: string
+          enum: [PASS, FAIL, SKIP, PENDING]
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScriptStep'
+
+    # ------------------
+    # Project Models
+    # ------------------
+    ModuleNode:
+      type: object
+      required: [id, name, scripts]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        inheritedFrom:
+          type: string
+          nullable: true
+        scripts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Script'
+
+    ProjectStats:
+      type: object
+      properties:
+        passRate:
+          type: number
+        coverage:
+          type: number
+        totalScripts:
+          type: integer
+
+    ProjectVersion:
+      type: object
+      required: [id, name, status, modules]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+          enum: [active, archived, draft]
+        releaseDate:
+          type: string
+          format: date
+        stats:
+          $ref: '#/components/schemas/ProjectStats'
+        modules:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModuleNode'
+
+    Project:
+      type: object
+      required: [id, name, versions]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        icon:
+          type: string
+        versions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectVersion'
+
+    # ------------------
+    # Execution Models
+    # ------------------
+    ExecutionSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        project:
+          type: string
+        version:
+          type: string
+        testCase:
+          type: string
+        module:
+          type: string
+        status:
+          type: string
+          enum: [PASS, FAIL, SKIP, PENDING]
+        duration:
+          type: string
+        environment:
+          type: string
+        triggeredBy:
+          type: string
+        time:
+          type: string
+
+    ExecutionDetail:
+      allOf:
+        - $ref: '#/components/schemas/ExecutionSummary'
+        - type: object
+          properties:
+            metrics:
+              type: object
+              properties:
+                qualityScore:
+                  type: integer
+                grade:
+                  type: string
+                networkRequests:
+                  type: integer
+                consoleErrors:
+                  type: integer
+
+    TestResultLog:
+      type: object
+      properties:
+        timestamp:
+          type: string
+        level:
+          type: string
+          enum: [INFO, DEBUG, ERROR]
+        message:
+          type: string
+
+    VisualDiffData:
+      type: object
+      properties:
+        baselineUrl:
+          type: string
+        actualUrl:
+          type: string
+        diffPercentage:
+          type: number
+        tolerance:
+          type: number
+
+    # ------------------
+    # Infrastructure
+    # ------------------
+    ServerNode:
+      type: object
+      required: [id, name, ip, status]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        ip:
+          type: string
+        status:
+          type: string
+          enum: [ONLINE, OFFLINE, BUSY]
+        os:
+          type: string
+          enum: [windows, mac, linux]
+        browsers:
+          type: array
+          items:
+            type: string
+        cpuUsage:
+          type: number
+        memUsage:
+          type: number
+        activeSessions:
+          type: integer
+        maxSessions:
+          type: integer
+
+    # ------------------
+    # Settings
+    # ------------------
+    SystemSettings:
+      type: object
+      properties:
+        general:
+          type: object
+          properties:
+            appName:
+              type: string
+            theme:
+              type: string
+        execution:
+          type: object
+          properties:
+            globalTimeout:
+              type: integer
+            retryCount:
+              type: integer
+            headless:
+              type: boolean
+        notifications:
+          type: object
+          properties:
+            emailRecipients:
+              type: string
+            slackWebhook:
+              type: string

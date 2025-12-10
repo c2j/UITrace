@@ -1,0 +1,5 @@
+{
+  "name": "UITrace Web Console",
+  "description": "A high-performance, data-driven UI automation testing platform dashboard. Features script management, visual regression analysis, and test execution reporting.",
+  "requestFramePermissions": []
+}
