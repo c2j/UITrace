@@ -1,0 +1,209 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id        String   @id @default(uuid())
+  name      String   @unique @db.VarChar(100)
+  icon      String?  @db.VarChar(50)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  versions Version[]
+
+  @@map("projects")
+}
+
+model Version {
+  id          String        @id @default(uuid())
+  projectId   String
+  name        String        @db.VarChar(50)
+  status      VersionStatus @default(DRAFT)
+  releaseDate DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  modules     Module[]
+
+  @@unique([projectId, name])
+  @@map("versions")
+}
+
+model Module {
+  id             String   @id @default(uuid())
+  versionId      String
+  name           String   @db.VarChar(100)
+  description    String?
+  inheritedFrom  String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  version      Version  @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  scripts      Script[]
+  inheritedBy  Module[] @relation("ModuleInheritance")
+  inheritsFrom Module?  @relation("ModuleInheritance", fields: [inheritedFrom], references: [id])
+
+  @@unique([versionId, name])
+  @@map("modules")
+}
+
+model Script {
+  id           String     @id @default(uuid())
+  moduleId     String
+  name         String     @db.VarChar(200)
+  description  String?
+  priority     Priority   @default(P1)
+  lastRunStatus RunStatus?
+  steps        Json
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  module     Module      @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  executions Execution[]
+  baselines  Baseline[]
+
+  @@unique([moduleId, name])
+  @@map("scripts")
+}
+
+model Execution {
+  id           String       @id @default(uuid())
+  scriptId     String
+  status       ExecutionStatus @default(PENDING)
+  startTime    DateTime     @default(now())
+  endTime      DateTime?
+  durationMs   Int?
+  environment  String       @db.VarChar(100)
+  triggeredBy  String       @db.VarChar(100)
+  nodeId       String?
+  qualityScore Int?         @db.SmallInt
+  traceFileKey String?      @db.VarChar(500)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  script      Script       @relation(fields: [scriptId], references: [id], onDelete: Cascade)
+  node        ServerNode?  @relation(fields: [nodeId], references: [id], onDelete: SetNull)
+  logs        ExecutionLog[]
+  visualDiffs VisualDiff[]
+
+  @@index([status, startTime])
+  @@index([scriptId])
+  @@map("executions")
+}
+
+model ExecutionLog {
+  id         String     @id @default(uuid())
+  executionId String
+  timestamp  DateTime   @default(now())
+  level      LogLevel
+  message    String     @db.Text
+  stepId     Int?
+
+  execution Execution @relation(fields: [executionId], references: [id], onDelete: Cascade)
+
+  @@index([executionId, timestamp])
+  @@map("execution_logs")
+}
+
+model VisualDiff {
+  id             String  @id @default(uuid())
+  executionId    String
+  stepId         Int
+  baselineKey    String  @db.VarChar(500)
+  actualKey      String  @db.VarChar(500)
+  diffKey        String? @db.VarChar(500)
+  diffPercentage Float
+  tolerance      Float   @default(0.1)
+  approved       Boolean @default(false)
+
+  execution Execution @relation(fields: [executionId], references: [id], onDelete: Cascade)
+
+  @@unique([executionId, stepId])
+  @@index([executionId, stepId])
+  @@map("visual_diffs")
+}
+
+model ServerNode {
+  id             String            @id @default(uuid())
+  name           String            @db.VarChar(100)
+  ip             String            @db.VarChar(45)
+  status         NodeStatus        @default(OFFLINE)
+  os             String            @db.VarChar(50)
+  browsers       Json
+  lastHeartbeat  DateTime          @default(now())
+  hardwareStats  Json?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  executions Execution[]
+
+  @@index([status])
+  @@map("server_nodes")
+}
+
+model Baseline {
+  id         String   @id @default(uuid())
+  scriptId   String
+  stepId     Int
+  environment String  @db.VarChar(100)
+  s3Key      String   @db.VarChar(500)
+  approvedAt DateTime @default(now())
+  approvedBy String   @db.VarChar(100)
+
+  script Script @relation(fields: [scriptId], references: [id], onDelete: Cascade)
+
+  @@unique([scriptId, stepId, environment])
+  @@map("baselines")
+}
+
+// Enums
+enum VersionStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum Priority {
+  P0
+  P1
+  P2
+}
+
+enum RunStatus {
+  PASS
+  FAIL
+  SKIP
+  PENDING
+}
+
+enum ExecutionStatus {
+  PENDING
+  RUNNING
+  PASS
+  FAIL
+  SKIP
+  TIMEOUT
+}
+
+enum LogLevel {
+  DEBUG
+  INFO
+  WARN
+  ERROR
+}
+
+enum NodeStatus {
+  ONLINE
+  OFFLINE
+  BUSY
+  MAINTENANCE
+}
