@@ -56,42 +56,43 @@ export const createApp = async () => {
     secret: config.jwt.secret,
   });
 
+  // TODO: Enable Swagger documentation after fixing schema references
   // Register Swagger documentation
-  await app.register(swagger, {
-    openapi: {
-      info: {
-        title: 'UITrace API',
-        description: 'High-performance UI automation testing platform',
-        version: '1.0.0',
-      },
-      servers: [
-        {
-          url: `http://${config.server.host}:${config.server.port}`,
-          description: 'Development server',
-        },
-      ],
-      tags: [
-        { name: 'Projects', description: 'Project management' },
-        { name: 'Scripts', description: 'Test script management' },
-        { name: 'Executions', description: 'Test execution' },
-        { name: 'Nodes', description: 'Execution nodes' },
-        { name: 'Analytics', description: 'Analytics and reports' },
-      ],
-      components: {
-        securitySchemes: {
-          bearerAuth: {
-            type: 'http',
-            scheme: 'bearer',
-            bearerFormat: 'JWT',
-          },
-        },
-      },
-    },
-  });
+  // await app.register(swagger, {
+  //   openapi: {
+  //     info: {
+  //       title: 'UITrace API',
+  //       description: 'High-performance UI automation testing platform',
+  //       version: '1.0.0',
+  //     },
+  //     servers: [
+  //       {
+  //         url: `http://${config.app.host}:${config.app.port}`,
+  //         description: 'Development server',
+  //       },
+  //     ],
+  //     tags: [
+  //       { name: 'Projects', description: 'Project management' },
+  //       { name: 'Scripts', description: 'Test script management' },
+  //       { name: 'Executions', description: 'Test execution' },
+  //       { name: 'Nodes', description: 'Execution nodes' },
+  //       { name: 'Analytics', description: 'Analytics and reports' },
+  //     ],
+  //     components: {
+  //       securitySchemes: {
+  //         bearerAuth: {
+  //           type: 'http',
+  //           scheme: 'bearer',
+  //           bearerFormat: 'JWT',
+  //         },
+  //       },
+  //     },
+  //   },
+  // });
 
-  await app.register(swaggerUi, {
-    routePrefix: '/docs',
-  });
+  // await app.register(swaggerUi, {
+  //   routePrefix: '/docs',
+  // });
 
   // Register correlation tracking plugin
   await app.register(correlationPlugin);

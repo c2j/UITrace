@@ -155,7 +155,7 @@ export class WebSocketManager {
   private url: string;
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
-  private reconnectDelay = 1000;
+  private reconnectDelay = 2000; // Start with 2s delay instead of 1s
 
   constructor(url: string = WS_URL) {
     this.url = url;
@@ -166,10 +166,12 @@ export class WebSocketManager {
       const wsUrl = `${this.url}${endpoint}`;
       const token = localStorage.getItem(JWT_KEY);
 
-      // Add token as query parameter if available
-      const urlWithToken = token ? `${wsUrl}?token=${token}` : wsUrl;
+      // Always include token in auth for production
+      const auth = token ? { token } : {};
 
-      this.ws = new WebSocket(urlWithToken);
+      this.ws = new WebSocket(wsUrl, {
+        auth,
+      });
 
       this.ws.onopen = () => {
         console.log('WebSocket connected');
@@ -202,11 +204,22 @@ export class WebSocketManager {
   private handleReconnect(endpoint: string, onMessage: (data: any) => void, onError?: (error: Event) => void) {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
-      console.log(`Attempting to reconnect... (${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+      // Use exponential backoff with jitter to prevent thundering herd
+      const exponentialDelay = Math.min(
+        this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1),
+        30000
+      );
+      const jitter = Math.random() * 1000; // Add random jitter up to 1s
+      const delayWithJitter = exponentialDelay + jitter;
+
+      console.log(`Attempting to reconnect in ${Math.round(delayWithJitter)}ms... (${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
 
       setTimeout(() => {
         this.connect(endpoint, onMessage, onError).catch(console.error);
-      }, this.reconnectDelay * this.reconnectAttempts);
+      }, delayWithJitter);
+    } else {
+      console.error('Max reconnection attempts reached. Giving up.');
+      onError?.(new Event('max_reconnect_attempts_reached') as any);
     }
   }
 

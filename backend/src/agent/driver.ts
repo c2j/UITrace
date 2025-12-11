@@ -1,9 +1,9 @@
 import { Page, Browser, BrowserContext, LaunchOptions } from 'playwright';
-import { config } from '@/config';
-import { logger } from '@/utils/logger';
-import { s3Client } from '@/libs/s3';
-import { WebSocketService } from '@/libs/websocket';
-import { ExecutionService } from '@/modules/execution/service';
+import { config } from '../config/index.js';
+import { logger } from '../utils/logger.js';
+import { s3Client } from '../libs/s3.js';
+import { WebSocketService } from '../libs/websocket.js';
+import { ExecutionService } from '../modules/execution/service.js';
 import { Script, ScriptStep } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -39,6 +39,10 @@ export class PlaywrightDriver {
   private wsService: WebSocketService;
   private executionService: ExecutionService;
   private screenshots: string[] = [];
+  // Track last update time for throttling (executionId -> timestamp)
+  private lastUpdateMap: Map<string, number> = new Map();
+  // Minimum interval between updates (in ms)
+  private readonly UPDATE_THROTTLE_MS = 100;
 
   constructor() {
     // Get WebSocket service instance (will be injected)
@@ -81,12 +85,12 @@ export class PlaywrightDriver {
             request.executionId,
             'RUNNING',
             progress,
-            `Executing step ${i + 1}: ${step.type}`,
+            `Executing step ${i + 1}: ${step.action}`,
             i
           );
 
           // Log step start
-          await this.logStep(request.executionId, i, 'INFO', `Starting step: ${step.type}`);
+          await this.logStep(request.executionId, i, 'INFO', `Starting step: ${step.action}`);
 
           // Execute step
           const result = await this.executeStep(step, i);
@@ -113,7 +117,7 @@ export class PlaywrightDriver {
             request.executionId,
             i,
             'INFO',
-            `Step completed successfully: ${step.type}`
+            `Step completed successfully: ${step.action}`
           );
         } catch (error) {
           const duration = Date.now() - stepStartTime;
@@ -246,9 +250,9 @@ export class PlaywrightDriver {
     }
 
     try {
-      switch (step.type) {
+      switch (step.action) {
         case 'navigate':
-          await this.page.goto(step.url);
+          await this.page.goto(step.value);
           break;
 
         case 'click':
@@ -263,9 +267,9 @@ export class PlaywrightDriver {
           const actualText = await this.getElementText(step);
           return {
             stepId: stepIndex,
-            status: actualText === step.value ? 'PASS' : 'FAIL',
+            status: actualText === step.expectedValue ? 'PASS' : 'FAIL',
             duration: Date.now() - startTime,
-            error: actualText !== step.value ? `Expected "${step.value}", got "${actualText}"` : undefined,
+            error: actualText !== step.expectedValue ? `Expected "${step.expectedValue}", got "${actualText}"` : undefined,
             actualValue: actualText,
           };
 
@@ -287,7 +291,7 @@ export class PlaywrightDriver {
           break;
 
         default:
-          throw new Error(`Unsupported step type: ${step.type}`);
+          throw new Error(`Unsupported step action: ${step.action}`);
       }
 
       return {
@@ -331,14 +335,26 @@ export class PlaywrightDriver {
   }
 
   private getSelector(step: ScriptStep): string {
-    // Priority: CSS > ID > Name > XPath > Data-testid
-    if (step.cssSelector) return step.cssSelector;
-    if (step.id) return `#${step.id}`;
-    if (step.name) return `[name="${step.name}"]`;
-    if (step.xpath) return step.xpath;
-    if (step.dataTestId) return `[data-testid="${step.dataTestId}"]`;
+    if (!step.selectors || step.selectors.length === 0) {
+      throw new Error('No selectors provided for step');
+    }
 
-    throw new Error('No valid selector found');
+    // Get the highest priority selector (lowest priority number)
+    const sortedSelectors = step.selectors.sort((a, b) => a.priority - b.priority);
+    const selector = sortedSelectors[0];
+
+    switch (selector.type) {
+      case 'css':
+        return selector.value;
+      case 'id':
+        return `#${selector.value}`;
+      case 'xpath':
+        return selector.value;
+      case 'text':
+        return `text=${selector.value}`;
+      default:
+        throw new Error(`Unsupported selector type: ${selector.type}`);
+    }
   }
 
   private async takeScreenshot(executionId: string, name: string, isError: boolean = false): Promise<string> {
@@ -365,15 +381,23 @@ export class PlaywrightDriver {
     message: string,
     stepIndex?: number
   ): Promise<void> {
-    // Emit WebSocket update
-    this.wsService.emitExecutionUpdate(executionId, {
-      status,
-      progress,
-      stepIndex,
-      message,
-    });
+    // Throttle WebSocket updates to prevent flickering
+    const now = Date.now();
+    const lastUpdate = this.lastUpdateMap.get(executionId) || 0;
+    const shouldSendUpdate = now - lastUpdate >= this.UPDATE_THROTTLE_MS;
 
-    // Update in database
+    // Only emit WebSocket update if enough time has passed
+    if (shouldSendUpdate) {
+      this.wsService.emitExecutionUpdate(executionId, {
+        status,
+        progress,
+        stepIndex,
+        message,
+      });
+      this.lastUpdateMap.set(executionId, now);
+    }
+
+    // Always update database (not throttled)
     await this.executionService.updateExecution(executionId, {
       status: status as any,
       progress,

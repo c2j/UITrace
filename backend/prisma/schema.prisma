@@ -165,6 +165,18 @@ model Baseline {
   @@map("baselines")
 }
 
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  name      String?  @db.VarChar(100)
+  role      UserRole @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
 // Enums
 enum VersionStatus {
   DRAFT
@@ -206,4 +218,10 @@ enum NodeStatus {
   OFFLINE
   BUSY
   MAINTENANCE
+}
+
+enum UserRole {
+  ADMIN
+  USER
+  VIEWER
 }

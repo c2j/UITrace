@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { projectRoutes } from './projects';
 import { scriptRoutes } from './scripts';
 import { executionRoutes } from '@/modules/execution/routes';
+import authRoutes from './auth';
 
 export const routes = async (fastify: FastifyInstance) => {
   // Root endpoint
@@ -14,6 +15,7 @@ export const routes = async (fastify: FastifyInstance) => {
   });
 
   // Register route modules
+  await fastify.register(authRoutes, { prefix: '/auth' });
   await fastify.register(projectRoutes);
   await fastify.register(scriptRoutes);
   await fastify.register(executionRoutes, { prefix: '/executions' });

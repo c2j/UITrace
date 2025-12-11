@@ -1,5 +1,6 @@
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import { Server as HttpServer } from 'http';
+import jwt from '@fastify/jwt';
 import { config } from '@/config';
 import { logger } from '@/utils/logger';
 import {
@@ -36,6 +37,37 @@ export class WebSocketService {
   private setupEventHandlers(): void {
     this.io.on('connection', (socket: Socket) => {
       logger.info('WebSocket client connected', { socketId: socket.id });
+
+      // Skip authentication in development and test environments
+      if (config.app.env !== 'development' && config.app.env !== 'test') {
+        // Verify authentication token from query parameters (only in production)
+        const token = socket.handshake.auth?.token || socket.handshake.query?.token;
+        if (!token || typeof token !== 'string') {
+          logger.warn('WebSocket connection rejected: No authentication token', { socketId: socket.id });
+          socket.emit('error', {
+            type: 'auth_error',
+            message: 'Authentication Required',
+          });
+          socket.disconnect(true);
+          return;
+        }
+
+        // Verify JWT token
+        try {
+          const decoded = jwt.verify(token, config.jwt.secret);
+          logger.debug('WebSocket authentication successful', { socketId: socket.id, userId: (decoded as any).sub });
+        } catch (err) {
+          logger.warn('WebSocket connection rejected: Invalid token', { socketId: socket.id, error: err });
+          socket.emit('error', {
+            type: 'auth_error',
+            message: 'Authentication Required',
+          });
+          socket.disconnect(true);
+          return;
+        }
+      } else {
+        logger.debug('WebSocket authentication skipped in development mode', { socketId: socket.id });
+      }
 
       // Initialize subscription for this client
       this.subscriptions.set(socket.id, {
@@ -212,9 +244,6 @@ export class WebSocketService {
 
     // Send to execution-specific room
     this.io.to(`execution:${executionId}`).emit('execution_update', message);
-
-    // Also send to clients subscribed to this execution
-    this.broadcastToSubscribers('execution', executionId, message);
   }
 
   emitLogMessage(executionId: string, logData: {
@@ -235,9 +264,6 @@ export class WebSocketService {
 
     // Send to execution-specific room
     this.io.to(`execution:${executionId}`).emit('log', message);
-
-    // Also send to clients subscribed to this execution
-    this.broadcastToSubscribers('execution', executionId, message);
   }
 
   emitNodeStatus(nodeId: string, status: 'ONLINE' | 'OFFLINE' | 'BUSY' | 'MAINTENANCE'): void {
@@ -253,9 +279,6 @@ export class WebSocketService {
 
     // Send to node-specific room
     this.io.to(`node:${nodeId}`).emit('node_status', message);
-
-    // Also send to clients subscribed to this node
-    this.broadcastToSubscribers('node', nodeId, message);
   }
 
   broadcastToAll(message: WebSocketMessage): void {
@@ -304,8 +327,8 @@ export class WebSocketService {
 
     return {
       totalClients: this.subscriptions.size,
-      executionSubscriptions,
-      nodeSubscriptions,
+      executionSubs,
+      nodeSubs,
     };
   }
 

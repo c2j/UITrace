@@ -25,7 +25,14 @@ export async function scriptRoutes(fastify: FastifyInstance) {
           priority: { type: 'string', enum: ['P0', 'P1', 'P2'], default: 'P1' },
           steps: {
             type: 'array',
-            items: { $ref: '#/components/schemas/ScriptStep' },
+            items: {
+              type: 'object',
+              properties: {
+                action: { type: 'string' },
+                selector: { type: 'string' },
+                value: { type: 'string' },
+              },
+            },
             minItems: 1,
           },
         },
@@ -35,7 +42,16 @@ export async function scriptRoutes(fastify: FastifyInstance) {
           type: 'object',
           properties: {
             success: { type: 'boolean' },
-            data: { $ref: '#/components/schemas/Script' },
+            data: {
+              type: 'object',
+              properties: {
+                id: { type: 'string' },
+                name: { type: 'string' },
+                description: { type: 'string' },
+                priority: { type: 'string' },
+                steps: { type: 'array' },
+              },
+            },
             message: { type: 'string' },
           },
         },
@@ -67,7 +83,17 @@ export async function scriptRoutes(fastify: FastifyInstance) {
             success: { type: 'boolean' },
             data: {
               type: 'array',
-              items: { $ref: '#/components/schemas/Script' },
+              items: {
+                type: 'object',
+                properties: {
+                  id: { type: 'string' },
+                  name: { type: 'string' },
+                  description: { type: 'string' },
+                  priority: { type: 'string' },
+                  createdAt: { type: 'string' },
+                  updatedAt: { type: 'string' },
+                },
+              },
             },
           },
         },
@@ -91,7 +117,18 @@ export async function scriptRoutes(fastify: FastifyInstance) {
           type: 'object',
           properties: {
             success: { type: 'boolean' },
-            data: { $ref: '#/components/schemas/Script' },
+            data: {
+              type: 'object',
+              properties: {
+                id: { type: 'string' },
+                name: { type: 'string' },
+                description: { type: 'string' },
+                priority: { type: 'string' },
+                steps: { type: 'array' },
+                createdAt: { type: 'string' },
+                updatedAt: { type: 'string' },
+              },
+            },
           },
         },
       },
@@ -169,7 +206,14 @@ export async function scriptRoutes(fastify: FastifyInstance) {
           priority: { type: 'string', enum: ['P0', 'P1', 'P2'] },
           steps: {
             type: 'array',
-            items: { $ref: '#/components/schemas/ScriptStep' },
+            items: {
+              type: 'object',
+              properties: {
+                action: { type: 'string' },
+                selector: { type: 'string' },
+                value: { type: 'string' },
+              },
+            },
             minItems: 1,
           },
         },
@@ -179,7 +223,16 @@ export async function scriptRoutes(fastify: FastifyInstance) {
           type: 'object',
           properties: {
             success: { type: 'boolean' },
-            data: { $ref: '#/components/schemas/Script' },
+            data: {
+              type: 'object',
+              properties: {
+                id: { type: 'string' },
+                name: { type: 'string' },
+                description: { type: 'string' },
+                priority: { type: 'string' },
+                steps: { type: 'array' },
+              },
+            },
             message: { type: 'string' },
           },
         },
@@ -307,7 +360,15 @@ export async function scriptRoutes(fastify: FastifyInstance) {
           type: 'object',
           properties: {
             success: { type: 'boolean' },
-            data: { $ref: '#/components/schemas/Script' },
+            data: {
+              type: 'object',
+              properties: {
+                id: { type: 'string' },
+                name: { type: 'string' },
+                description: { type: 'string' },
+                priority: { type: 'string' },
+              },
+            },
             message: { type: 'string' },
           },
         },
@@ -325,7 +386,14 @@ export async function scriptRoutes(fastify: FastifyInstance) {
         properties: {
           steps: {
             type: 'array',
-            items: { $ref: '#/components/schemas/ScriptStep' },
+            items: {
+              type: 'object',
+              properties: {
+                action: { type: 'string' },
+                selector: { type: 'string' },
+                value: { type: 'string' },
+              },
+            },
             minItems: 1,
           },
         },

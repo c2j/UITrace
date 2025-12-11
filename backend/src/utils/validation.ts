@@ -50,7 +50,7 @@ export const createModuleSchema = z.object({
   versionId: uuidSchema,
   name: z.string().min(2).max(100),
   description: z.string().max(500).optional(),
-  inheritedFrom: uuidSchema().optional(),
+  inheritedFrom: uuidSchema.optional(),
 });
 
 export const updateModuleSchema = createModuleSchema.partial().omit({ versionId: true, inheritedFrom: true });
@@ -93,7 +93,7 @@ export const scriptParamsSchema = z.object({
 export const runScriptSchema = z.object({
   environment: z.string().min(1).max(100),
   triggeredBy: z.string().min(1).max(100),
-  nodeId: uuidSchema().optional(),
+  nodeId: uuidSchema.optional(),
 });
 
 // Execution schemas
@@ -102,7 +102,7 @@ export const executionParamsSchema = z.object({
 });
 
 export const listExecutionsSchema = z.object({
-  scriptId: uuidSchema().optional(),
+  scriptId: uuidSchema.optional(),
   status: z.enum(['PENDING', 'RUNNING', 'PASS', 'FAIL', 'SKIP', 'TIMEOUT']).optional(),
   ...paginationSchema.shape,
   ...dateRangeSchema.shape,
@@ -155,8 +155,8 @@ export const approveBaselineSchema = z.object({
 
 // Analytics schemas
 export const analyticsQuerySchema = z.object({
-  projectId: uuidSchema().optional(),
-  versionId: uuidSchema().optional(),
+  projectId: uuidSchema.optional(),
+  versionId: uuidSchema.optional(),
   startDate: z.string().datetime(),
   endDate: z.string().datetime(),
   groupBy: z.enum(['day', 'week', 'month']).default('day'),

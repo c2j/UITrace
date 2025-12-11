@@ -1,27 +1,16 @@
-# Logs
-logs
-*.log
+# Dependencies
+node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-lerna-debug.log*
-
-# Dependencies
-node_modules/
-frontend/node_modules/
-backend/node_modules/
-.npm
-.yarn-integrity
 
 # Build outputs
 dist/
-dist-ssr/
 build/
 out/
 .next/
 .nuxt/
-.vuepress/dist/
 
 # Environment variables
 .env
@@ -30,24 +19,12 @@ out/
 .env.test.local
 .env.production.local
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# OS generated files
-Thumbs.db
-*.tmp
-*.temp
+# Logs
+logs/
+*.log
 
 # Runtime data
-pids
+pids/
 *.pid
 *.seed
 *.pid.lock
@@ -55,15 +32,16 @@ pids
 # Coverage directory used by tools like istanbul
 coverage/
 *.lcov
-.nyc_output
+.nyc_output/
 
-# TypeScript cache
-*.tsbuildinfo
+# Dependency directories
+.npm
+.yarn-integrity
 
 # Optional npm cache directory
 .npm
 
-# ESLint cache
+# Optional eslint cache
 .eslintcache
 
 # Optional stylelint cache
@@ -88,15 +66,38 @@ coverage/
 .cache
 .parcel-cache
 
-# Stores VSCode versions used for testing VSCode extensions
-.vscode-test
+# Next.js build output
+.next
 
-# yarn v2
-.yarn/cache
-.yarn/unplugged
-.yarn/build-state.yml
-.yarn/install-state.gz
-.pnp.*
+# Nuxt.js build / generate output
+.nuxt
+
+# Storybook build outputs
+.out
+.storybook-out
+
+# Temporary folders
+tmp/
+temp/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
 # Database
 *.sqlite
@@ -106,15 +107,14 @@ coverage/
 # Redis dump
 dump.rdb
 
-# Docker
-.dockerignore
+# Playwright
+/test-results/
+/playwright-report/
+/test-results.xml
 
-# Backend specific
-uploads/
+# Screenshots and test artifacts
 screenshots/
 test-results/
-playwright-report/
-test-results.xml
 
 # S3/MinIO local cache
 .cache/s3/

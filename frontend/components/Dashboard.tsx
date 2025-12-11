@@ -31,7 +31,8 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     if (projects && projects.length > 0 && !selectedProjectId) {
       setSelectedProjectId(projects[0].id);
-      setSelectedVersionId(projects[0].versions[0]?.id || '');
+      const firstVersion = projects[0].versions?.[0];
+      setSelectedVersionId(firstVersion?.id || '');
     }
   }, [projects]); // Remove selectedProjectId from dependencies
 
@@ -71,7 +72,7 @@ const Dashboard: React.FC = () => {
 
   // Sync version if project changes
   useEffect(() => {
-    if (selectedProject && selectedProject.versions.length > 0) {
+    if (selectedProject && selectedProject.versions?.length > 0) {
       const versionExists = selectedProject.versions.find(v => v.id === selectedVersionId);
       if (!versionExists) {
         setSelectedVersionId(selectedProject.versions[0].id);
@@ -317,7 +318,7 @@ const Dashboard: React.FC = () => {
                 </button>
             </div>
             <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height="100%" minWidth={200} minHeight={200}>
                     <AreaChart data={DAILY_STATS}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                         <XAxis

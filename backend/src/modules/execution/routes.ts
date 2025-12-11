@@ -1,9 +1,10 @@
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest, FastifyReply } from 'fastify';
 import { ExecutionController } from './controller';
 import { ExecutionSchemas } from './schemas';
+import { ExecutionService } from './service';
 import { VisualDiffService } from './visual-diff-service';
 import { AgentController } from '@/modules/agent/controller';
-import { authMiddleware } from '@/middleware/auth';
+import { authenticate } from '@/middleware/auth';
 
 export async function executionRoutes(
   fastify: FastifyInstance,
@@ -143,7 +144,7 @@ export async function executionRoutes(
     fastify.route({
       method: route.method,
       url: route.url,
-      preHandler: [authMiddleware],
+      preHandler: [authenticate],
       handler: route.handler,
       schema: route.schema,
       config: route.config || {},

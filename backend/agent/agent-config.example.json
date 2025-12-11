@@ -1,0 +1,27 @@
+{
+  "nodeId": "node-001",
+  "name": "Test Node 1",
+  "serverUrl": "http://localhost:3000",
+  "apiToken": "your-api-token-here",
+  "capabilities": [
+    {
+      "browser": "chrome",
+      "version": "120.0.6099.109",
+      "platform": "linux"
+    },
+    {
+      "browser": "firefox",
+      "version": "121.0",
+      "platform": "linux"
+    }
+  ],
+  "heartbeatInterval": 30000,
+  "maxConcurrentExecutions": 2,
+  "workDir": "./agent-workspace",
+  "options": {
+    "headless": true,
+    "screenshots": true,
+    "videos": true,
+    "timeout": 30000
+  }
+}

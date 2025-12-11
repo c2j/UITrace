@@ -7,11 +7,15 @@ import TestResult from './components/TestResult';
 import ServerNodes from './components/ServerNodes';
 import Settings from './components/Settings';
 import Recorder from './components/Recorder';
+import Login from './components/Login';
 
 const App: React.FC = () => {
   return (
     <HashRouter>
       <Routes>
+        {/* Login Route */}
+        <Route path="/login" element={<Login />} />
+
         {/* Standalone Recorder Route for Full Screen Experience */}
         <Route path="/record" element={<Recorder />} />
 
@@ -23,7 +27,7 @@ const App: React.FC = () => {
           <Route path="server" element={<ServerNodes />} />
           <Route path="settings" element={<Settings />} />
         </Route>
-        
+
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </HashRouter>

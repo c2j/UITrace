@@ -4,6 +4,20 @@ import { ProjectController } from '@/modules/project/controller';
 export async function projectRoutes(fastify: FastifyInstance) {
   const projectController = new ProjectController(fastify.prisma);
 
+  // Bind all methods to preserve 'this' context
+  const boundController = {
+    createProject: projectController.createProject.bind(projectController),
+    getProject: projectController.getProject.bind(projectController),
+    getProjectWithVersions: projectController.getProjectWithVersions.bind(projectController),
+    listProjects: projectController.listProjects.bind(projectController),
+    listProjectsWithVersionCount: projectController.listProjectsWithVersionCount.bind(projectController),
+    updateProject: projectController.updateProject.bind(projectController),
+    deleteProject: projectController.deleteProject.bind(projectController),
+    searchProjects: projectController.searchProjects.bind(projectController),
+    getProjectStats: projectController.getProjectStats.bind(projectController),
+    archiveProject: projectController.archiveProject.bind(projectController),
+  };
+
   // Project CRUD operations
   fastify.post('/projects', {
     schema: {
@@ -22,13 +36,22 @@ export async function projectRoutes(fastify: FastifyInstance) {
           type: 'object',
           properties: {
             success: { type: 'boolean' },
-            data: { $ref: '#/components/schemas/Project' },
+            data: {
+              type: 'object',
+              properties: {
+                id: { type: 'string' },
+                name: { type: 'string' },
+                icon: { type: 'string' },
+                createdAt: { type: 'string' },
+                updatedAt: { type: 'string' },
+              },
+            },
             message: { type: 'string' },
           },
         },
       },
     },
-  }, projectController.createProject);
+  }, boundController.createProject);
 
   fastify.get('/projects', {
     schema: {
@@ -48,7 +71,16 @@ export async function projectRoutes(fastify: FastifyInstance) {
             success: { type: 'boolean' },
             data: {
               type: 'array',
-              items: { $ref: '#/components/schemas/Project' },
+              items: {
+                type: 'object',
+                properties: {
+                  id: { type: 'string' },
+                  name: { type: 'string' },
+                  icon: { type: 'string' },
+                  createdAt: { type: 'string' },
+                  updatedAt: { type: 'string' },
+                },
+              },
             },
             pagination: {
               type: 'object',
@@ -63,7 +95,7 @@ export async function projectRoutes(fastify: FastifyInstance) {
         },
       },
     },
-  }, projectController.listProjects);
+  }, boundController.listProjects);
 
   fastify.get('/projects/summary', {
     schema: {
@@ -114,7 +146,7 @@ export async function projectRoutes(fastify: FastifyInstance) {
         },
       },
     },
-  }, projectController.listProjectsWithVersionCount);
+  }, boundController.listProjectsWithVersionCount);
 
   fastify.get('/projects/search', {
     schema: {
@@ -130,7 +162,7 @@ export async function projectRoutes(fastify: FastifyInstance) {
         },
       },
     },
-  }, projectController.searchProjects);
+  }, boundController.searchProjects);
 
   fastify.get('/projects/:projectId', {
     schema: {
@@ -148,12 +180,21 @@ export async function projectRoutes(fastify: FastifyInstance) {
           type: 'object',
           properties: {
             success: { type: 'boolean' },
-            data: { $ref: '#/components/schemas/Project' },
+            data: {
+              type: 'object',
+              properties: {
+                id: { type: 'string' },
+                name: { type: 'string' },
+                icon: { type: 'string' },
+                createdAt: { type: 'string' },
+                updatedAt: { type: 'string' },
+              },
+            },
           },
         },
       },
     },
-  }, projectController.getProject);
+  }, boundController.getProject);
 
   fastify.get('/projects/:projectId/versions', {
     schema: {
@@ -172,24 +213,31 @@ export async function projectRoutes(fastify: FastifyInstance) {
           properties: {
             success: { type: 'boolean' },
             data: {
-              allOf: [
-                { $ref: '#/components/schemas/Project' },
-                {
-                  type: 'object',
-                  properties: {
-                    versions: {
-                      type: 'array',
-                      items: { $ref: '#/components/schemas/Version' },
+              type: 'object',
+              properties: {
+                id: { type: 'string' },
+                name: { type: 'string' },
+                icon: { type: 'string' },
+                createdAt: { type: 'string' },
+                updatedAt: { type: 'string' },
+                versions: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      id: { type: 'string' },
+                      name: { type: 'string' },
+                      status: { type: 'string' },
                     },
                   },
                 },
-              ],
+              },
             },
           },
         },
       },
     },
-  }, projectController.getProjectWithVersions);
+  }, boundController.getProjectWithVersions);
 
   fastify.get('/projects/:projectId/stats', {
     schema: {
@@ -210,7 +258,16 @@ export async function projectRoutes(fastify: FastifyInstance) {
             data: {
               type: 'object',
               properties: {
-                project: { $ref: '#/components/schemas/Project' },
+                project: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'string' },
+                    name: { type: 'string' },
+                    icon: { type: 'string' },
+                    createdAt: { type: 'string' },
+                    updatedAt: { type: 'string' },
+                  },
+                },
                 versions: {
                   type: 'object',
                   properties: {
@@ -229,7 +286,7 @@ export async function projectRoutes(fastify: FastifyInstance) {
         },
       },
     },
-  }, projectController.getProjectStats);
+  }, boundController.getProjectStats);
 
   fastify.put('/projects/:projectId', {
     schema: {
@@ -254,13 +311,22 @@ export async function projectRoutes(fastify: FastifyInstance) {
           type: 'object',
           properties: {
             success: { type: 'boolean' },
-            data: { $ref: '#/components/schemas/Project' },
+            data: {
+              type: 'object',
+              properties: {
+                id: { type: 'string' },
+                name: { type: 'string' },
+                icon: { type: 'string' },
+                createdAt: { type: 'string' },
+                updatedAt: { type: 'string' },
+              },
+            },
             message: { type: 'string' },
           },
         },
       },
     },
-  }, projectController.updateProject);
+  }, boundController.updateProject);
 
   fastify.post('/projects/:projectId/archive', {
     schema: {
@@ -274,7 +340,7 @@ export async function projectRoutes(fastify: FastifyInstance) {
         },
       },
     },
-  }, projectController.archiveProject);
+  }, boundController.archiveProject);
 
   fastify.delete('/projects/:projectId', {
     schema: {
@@ -297,5 +363,5 @@ export async function projectRoutes(fastify: FastifyInstance) {
         },
       },
     },
-  }, projectController.deleteProject);
+  }, boundController.deleteProject);
 }

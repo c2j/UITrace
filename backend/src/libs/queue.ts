@@ -33,6 +33,8 @@ export class QueueService {
   private notificationQueue: Queue;
   private cleanupQueue: Queue;
   private workers: Worker[] = [];
+  private wsService: WebSocketService;
+  private executionService: ExecutionService;
 
   constructor() {
     this.redisConnection = redisClient.getClient() as IORedis;
@@ -144,6 +146,11 @@ export class QueueService {
     logger.info('Workers initialized', { workerCount: this.workers.length });
   }
 
+  setServices(wsService: WebSocketService, executionService: ExecutionService): void {
+    this.wsService = wsService;
+    this.executionService = executionService;
+  }
+
   private async processExecutionJob(job: Job<ExecutionJobData>): Promise<any> {
     const { executionId, scriptId, environment, triggeredBy, nodeId } = job.data;
 
@@ -158,6 +165,9 @@ export class QueueService {
       // Import here to avoid circular dependencies
       const { PlaywrightDriver } = await import('../agent/driver');
       const driver = new PlaywrightDriver();
+
+      // Inject services
+      driver.setServices(this.wsService, this.executionService);
 
       // Execute the script
       const result = await driver.executeScript({

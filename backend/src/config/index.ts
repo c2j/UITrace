@@ -44,7 +44,11 @@ const envSchema = z.object({
   RATE_LIMIT_WINDOW: z.string().transform(Number).default('60000'),
 
   // CORS
-  CORS_ORIGIN: z.string().default('http://localhost:3000'),
+  CORS_ORIGIN: z.string().default('http://localhost:3000').transform(val => {
+    // Support multiple origins separated by comma
+    const origins = val.split(',').map(o => o.trim()).filter(Boolean);
+    return origins.length === 1 ? origins[0] : origins;
+  }),
   CORS_CREDENTIALS: z.string().transform(val => val === 'true').default('true'),
 
   // Sentry (optional)
